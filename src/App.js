@@ -1,26 +1,24 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { Button } from "@wfp/ui";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbHome } from "@wfp/ui";
 
-function App() {
+import "@wfp/ui/assets/css/styles.min.css";
+
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <Breadcrumb>
+        <BreadcrumbItem>
+          <a href="/#">
+            <BreadcrumbHome />
+          </a>
+        </BreadcrumbItem>
+        <BreadcrumbItem href="#">Breadcrumb 2</BreadcrumbItem>
+        <BreadcrumbItem disableLink>Breadcrumb 3</BreadcrumbItem>
+        link
+      </Breadcrumb>
     </div>
   );
-}
+};
 
 export default App;
