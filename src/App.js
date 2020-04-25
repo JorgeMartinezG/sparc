@@ -1,12 +1,14 @@
 import React from "react";
 import { Button } from "@wfp/ui";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbHome } from "@wfp/ui";
+import "./style.scss";
 
 import "@wfp/ui/assets/css/styles.min.css";
 
 const App = () => {
   return (
-    <div>
+    <div className="container">
+      <h1>hello</h1>
       <Breadcrumb>
         <BreadcrumbItem>
           <a href="/#">
