@@ -1,10 +1,26 @@
 @import "~@wfp/ui/source/globals/scss/vars";
 @import "tachyons";
 
-.bg-primary {
+.bg-interactive-01 {
 	background-color: $interactive-01;
+}
+
+.interactive-02,
+.hover-interactive-02:hover {
+	background-color: $interactive-02;
 }
 
 .fill-white {
 	fill: $field-01;
+}
+
+.search {
+	height: 0;
+	transition: height 0.15s ease-out;
+	overflow: hidden;
+}
+
+.is_open {
+	height: 200px;
+	transition: height 0.2s ease-in;
 }
