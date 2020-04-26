@@ -86,23 +86,31 @@ const Header = () => {
   );
 };
 
-const Sidebar = ({ toggle }) => {
-  let sbClass = "w-20 bg-light-gray shadow-2 sidebar absolute z-2 mv3 ";
-  if (toggle === false) {
-    sbClass += "dn";
-  }
-
+const Sidebar = ({ sidebarRef }) => {
   return (
-    <div className={sbClass}>
+    <div
+      ref={sidebarRef}
+      className="w-20 bg-light-gray shadow-2 sidebar absolute z-2 mv3 "
+    >
       <Header />
     </div>
   );
 };
 
+const Icons = ({ sidebarRef }) => {
+  return (
+    <Icon
+      className="ml2 h2 shadow-2 w2 absolute z-3 left-0 mt3 pa2 br-100 bg-light-gray ba1"
+      icon={iconMenu}
+      onClick={() => sidebarRef.current.classList.toggle("dn")}
+    />
+  );
+};
+
 const Viewer = () => {
   const mapRef = React.useRef();
+  const sidebarRef = React.useRef();
   const [, setMap] = useState(null);
-  const [toggle, setToggle] = useState(true);
 
   useEffect(() => {
     const map = new mapboxgl.Map({
@@ -118,12 +126,8 @@ const Viewer = () => {
 
   return (
     <div ref={mapRef} className="vh-100 relative z-1">
-      <Icon
-        className="ml2 h2 shadow-2 w2 absolute z-3 left-0 mt3 pa2 br-100 bg-light-gray ba1"
-        icon={iconMenu}
-        onClick={() => setToggle((t) => !t)}
-      />
-      <Sidebar toggle={toggle} />
+      <Icons sidebarRef={sidebarRef} />
+      <Sidebar sidebarRef={sidebarRef} />
     </div>
   );
 };
