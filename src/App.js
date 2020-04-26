@@ -1,13 +1,17 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect, useState } from "react";
 
 import LogoEmblem from "./assets/wfp-logo-emblem-white.svg";
 import { iconSearch } from "@wfp/icons";
 import { Icon } from "@wfp/ui";
+import mapboxgl from "mapbox-gl";
 
 import { Modal } from "@wfp/ui";
 
 import "./assets/style.scss";
 import "@wfp/ui/assets/css/styles.min.css";
+
+mapboxgl.accessToken =
+  "pk.eyJ1Ijoiam9yZ2VtYXJ0aW5lemciLCJhIjoiY2p4OTU2OGxyMHNhejN6bzFycG15bnE4diJ9.WKKXi8wO5onqMhfwvE6sIQ";
 
 const SearchMenu = ({ trigger }) => {
   return (
@@ -40,7 +44,6 @@ const Search = () => {
     <div>
       <SearchButton trigger={trigger} />
       <SearchMenu trigger={trigger} />
-      <div className="bg-gray">BBBBB</div>
     </div>
   );
 };
@@ -75,7 +78,7 @@ const Logo = () => {
 
 const Header = () => {
   return (
-    <div className="w-20 bg-interactive-01">
+    <div className="w-20 bg-interactive-01 absolute left-0">
       <About />
       <Logo />
       <Nav />
@@ -87,12 +90,30 @@ const Sidebar = () => {
   return <Header />;
 };
 
-const App = () => {
+const Viewer = () => {
+  const mapRef = React.useRef();
+  const [map, setMap] = useState(null);
+
+  useEffect(() => {
+    const map = new mapboxgl.Map({
+      container: mapRef.current,
+      style: "mapbox://styles/mapbox/light-v9",
+      center: [0, 0],
+      zoom: 2,
+    });
+
+    setMap(map);
+  }, []);
+
   return (
-    <div className="vh-100">
+    <div ref={mapRef} className="bg-light-gray vh-100 relative">
       <Sidebar />
     </div>
   );
+};
+
+const App = () => {
+  return <Viewer />;
 };
 
 export default App;
