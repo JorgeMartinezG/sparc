@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 
 import LogoEmblem from "./assets/wfp-logo-emblem-white.svg";
-import { iconSearch } from "@wfp/icons";
+import { iconSearch, iconMenu } from "@wfp/icons";
 import { Icon } from "@wfp/ui";
 import mapboxgl from "mapbox-gl";
 
@@ -78,7 +78,7 @@ const Logo = () => {
 
 const Header = () => {
   return (
-    <div className="w-20 bg-interactive-01 absolute left-0">
+    <div className="bg-interactive-01">
       <About />
       <Logo />
       <Nav />
@@ -86,13 +86,23 @@ const Header = () => {
   );
 };
 
-const Sidebar = () => {
-  return <Header />;
+const Sidebar = ({ toggle }) => {
+  let sbClass = "w-20 bg-light-gray shadow-2 sidebar absolute z-2 mv3 ";
+  if (toggle === false) {
+    sbClass += "dn";
+  }
+
+  return (
+    <div className={sbClass}>
+      <Header />
+    </div>
+  );
 };
 
 const Viewer = () => {
   const mapRef = React.useRef();
-  const [map, setMap] = useState(null);
+  const [, setMap] = useState(null);
+  const [toggle, setToggle] = useState(true);
 
   useEffect(() => {
     const map = new mapboxgl.Map({
@@ -100,14 +110,20 @@ const Viewer = () => {
       style: "mapbox://styles/mapbox/light-v9",
       center: [0, 0],
       zoom: 2,
+      attributionControl: false,
     });
 
     setMap(map);
   }, []);
 
   return (
-    <div ref={mapRef} className="bg-light-gray vh-100 relative">
-      <Sidebar />
+    <div ref={mapRef} className="vh-100 relative z-1">
+      <Icon
+        className="ml2 h2 shadow-2 w2 absolute z-3 left-0 mt3 pa2 br-100 bg-light-gray ba1"
+        icon={iconMenu}
+        onClick={() => setToggle((t) => !t)}
+      />
+      <Sidebar toggle={toggle} />
     </div>
   );
 };
