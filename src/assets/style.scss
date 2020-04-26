@@ -2,5 +2,9 @@
 @import "tachyons";
 
 .bg-primary {
-	background-color: $brand-01;
+	background-color: $interactive-01;
+}
+
+.fill-white {
+	fill: $field-01;
 }
