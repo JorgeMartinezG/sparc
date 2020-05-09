@@ -20,9 +20,8 @@ mapboxgl.accessToken =
 
 const addLayer = (layerName, data, map) => {
   const options = {
-    "fill-color": "#fff",
-    "fill-outline-color": "#00f",
-    "fill-opacity": 0.5,
+    "fill-color": ["get", "prob_class"],
+    "fill-opacity": 0.8,
   };
 
   if (map.getLayer(layerName)) {
@@ -44,12 +43,71 @@ const addLayer = (layerName, data, map) => {
   });
 };
 
-const getGeom = async (map, country) => {
+const processLandsLide = (geojson, summary_json, month) => {
+  const admin2Values = summary_json.admin2;
+
+  const colorsMap = {
+    low: "#1d4877",
+    medium: "#fbb021",
+    high: "#f68838",
+    very_high: "#ee3e32",
+  };
+
+  const processedFeatures = geojson.features.map((f) => {
+    const values = admin2Values[f.properties.admin2_code];
+    if (values !== undefined) {
+      let prob_class = colorsMap["low"];
+
+      // Get the probability class associated.
+      Object.keys(values.prob_class).forEach((c) => {
+        const sum = values.prob_class[c].by_month.reduce((a, b) => a + b, 0);
+        if (sum !== 0) {
+          prob_class = colorsMap[c];
+        }
+      });
+
+      const properties = { ...f.properties, prob_class: prob_class };
+
+      return { ...f, properties: properties };
+    }
+    return null;
+  });
+
+  const filtered = processedFeatures.filter((f) => f !== null);
+
+  const geom = {
+    type: "FeatureCollection",
+    features: filtered,
+  };
+
+  return geom;
+};
+
+const processData = (hazard, geojson, summary_json) => {
+  switch (hazard) {
+    case "landslide":
+      return processLandsLide(geojson, summary_json, 0);
+    default:
+      return null;
+  }
+};
+
+const getGeom = async (map, country, hazard) => {
+  // Get country geojson.
   const resp = await fetch(
     `${API_URL}country/${country}/dataset/context/${country}_NHR_ContextLayers.json`
   );
-  const json = await resp.json();
-  addLayer("country", json, map);
+  const geojson = await resp.json();
+
+  // Get data per admin2 code, per month, per category.
+  const resp_summary = await fetch(
+    `${API_URL}country/${country}/hazard/${hazard}/dataset/summary/${country}_NHR_PopAtRisk_${hazard}_Summary.json`
+  );
+  const summary_json = await resp_summary.json();
+
+  const init_layer = processData(hazard, geojson, summary_json);
+
+  addLayer("country", init_layer, map);
 };
 
 const SearchMenu = ({ trigger }) => {
@@ -60,11 +118,13 @@ const SearchMenu = ({ trigger }) => {
       return { ...p, loading: true };
     });
 
-    getGeom(map, searchState.country.value).then(() => {
-      setState((p) => {
-        return { ...p, loading: false };
-      });
-    });
+    getGeom(map, searchState.country.value, searchState.hazard.value).then(
+      () => {
+        setState((p) => {
+          return { ...p, loading: false };
+        });
+      }
+    );
   };
 
   const customStyles = {
@@ -76,7 +136,7 @@ const SearchMenu = ({ trigger }) => {
   };
 
   return (
-    <div ref={trigger} className="pt2 bg-light-gray search">
+    <div ref={trigger} className="pt2 bg-light-gray search is_open">
       <div className="w-70 center f7">
         <Select
           isClearable={true}
@@ -169,7 +229,10 @@ const Logo = () => {
   return (
     <div className="flex items-center w-100 justify-center pv2">
       <img alt="emblem" className="h3 w3 mr3" src={LogoEmblem} />
-      <p className="white ttu b f3">sparc</p>
+      <div>
+        <p className="white ttu b f3 ma0 pa0">sparc</p>
+        <p className="white b f5 mt0">Spatial Risk Calendar</p>
+      </div>
     </div>
   );
 };
