@@ -8,12 +8,27 @@ import mapboxgl from "mapbox-gl";
 import { Modal, Button, Loading } from "@wfp/ui";
 import Select from "react-select";
 import bbox from "@turf/bbox";
+import { Bar } from "react-chartjs-2";
 
 import "./assets/style.scss";
 import "@wfp/ui/assets/css/styles.min.css";
 
 const API_URL = "http://sparc.wfp.org/api/data/";
 const StateContext = React.createContext();
+const CHART_LABELS = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
 
 mapboxgl.accessToken =
   "pk.eyJ1Ijoiam9yZ2VtYXJ0aW5lemciLCJhIjoiY2p4OTU2OGxyMHNhejN6bzFycG15bnE4diJ9.WKKXi8wO5onqMhfwvE6sIQ";
@@ -80,7 +95,24 @@ const processLandsLide = (geojson, summary_json, month) => {
     features: filtered,
   };
 
-  return geom;
+  // Create a new array of data for chart.
+  const items = ["low", "medium", "high", "very_high"];
+  const datasets = items.map((i) => {
+    return {
+      data: summary_json.prob_class[i].by_month,
+      type: "bar",
+      stack: "prob_class",
+      label: i,
+      backgroundColor: colorsMap[i],
+    };
+  });
+
+  const chartData = {
+    labels: CHART_LABELS,
+    datasets: datasets,
+  };
+
+  return { geom: geom, chartData: chartData };
 };
 
 const processData = (hazard, geojson, summary_json) => {
@@ -105,9 +137,11 @@ const getGeom = async (map, country, hazard) => {
   );
   const summary_json = await resp_summary.json();
 
-  const init_layer = processData(hazard, geojson, summary_json);
+  const { geom, chartData } = processData(hazard, geojson, summary_json);
 
-  addLayer("country", init_layer, map);
+  addLayer("country", geom, map);
+
+  return chartData;
 };
 
 const SearchMenu = ({ trigger }) => {
@@ -119,9 +153,10 @@ const SearchMenu = ({ trigger }) => {
     });
 
     getGeom(map, searchState.country.value, searchState.hazard.value).then(
-      () => {
+      (res) => {
+        console.log(JSON.stringify(res));
         setState((p) => {
-          return { ...p, loading: false };
+          return { ...p, loading: false, chartData: res };
         });
       }
     );
@@ -248,12 +283,20 @@ const Header = () => {
 };
 
 const Sidebar = ({ sidebarRef }) => {
+  const { searchState } = useContext(StateContext);
+
+  let chart = null;
+  if (searchState.chartData !== null) {
+    chart = <Bar data={searchState.chartData} />;
+  }
+
   return (
     <div
       ref={sidebarRef}
-      className="w-30 bg-near-white shadow-2 sidebar absolute z-2 mv3 "
+      className="w-30 bg-near-white shadow-2 sidebar absolute z-2 mv3 flex flex-column"
     >
       <Header />
+      <div className="w-90 center overflow-y-hidden h-100"> {chart}</div>
     </div>
   );
 };
@@ -263,7 +306,11 @@ const Icons = ({ sidebarRef }) => {
     <Icon
       className="ml2 h2 shadow-2 w2 absolute z-3 left-0 mt3 pa2 br-100 bg-light-gray ba1"
       icon={iconMenu}
-      onClick={() => sidebarRef.current.classList.toggle("dn")}
+      onClick={() =>
+        ["dn", "flex", "flex-column"].map((i) => {
+          sidebarRef.current.classList.toggle(i);
+        })
+      }
     />
   );
 };
@@ -299,10 +346,84 @@ const Viewer = () => {
   const sidebarRef = React.useRef();
   const [map, setMap] = useState(null);
 
+  let config = {
+    labels: [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ],
+    datasets: [
+      {
+        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        type: "bar",
+        stack: "prob_class",
+        label: "low",
+        backgroundColor: "#1d4877",
+      },
+      {
+        data: [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        type: "bar",
+        stack: "prob_class",
+        label: "medium",
+        backgroundColor: "#fbb021",
+      },
+      {
+        data: [
+          3880,
+          3871,
+          3867,
+          3858,
+          3858,
+          3858,
+          3507,
+          3507,
+          3858,
+          3858,
+          3858,
+          3511,
+        ],
+        type: "bar",
+        stack: "prob_class",
+        label: "high",
+        backgroundColor: "#f68838",
+      },
+      {
+        data: [
+          2581,
+          2344,
+          2259,
+          1831,
+          1717,
+          1710,
+          1352,
+          1342,
+          1709,
+          1844,
+          1975,
+          2039,
+        ],
+        type: "bar",
+        stack: "prob_class",
+        label: "very_high",
+        backgroundColor: "#ee3e32",
+      },
+    ],
+  };
+
   const [searchState, setState] = useState({
     country: null,
     hazard: null,
     loading: false,
+    chartData: config,
   });
   const [search, setSearch] = useState({ countries: null, hazards: null });
 
