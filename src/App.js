@@ -1,39 +1,18 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState } from "react";
 
 import mapboxgl from "mapbox-gl";
-
-import { Bar } from "react-chartjs-2";
 
 import "./assets/style.scss";
 import "@wfp/ui/assets/css/styles.min.css";
 
 import { fetchCountries, fetchHazards } from "./components/utils.js";
 import { Icons } from "./components/icons.js";
-import { Header } from "./components/header.js";
+import { Sidebar } from "./components/sidebar.js";
 import { MAPBOX_TOKEN } from "./config.js";
 
 export const StateContext = React.createContext();
 
 mapboxgl.accessToken = MAPBOX_TOKEN;
-
-const Sidebar = ({ sidebarRef }) => {
-  const { searchState } = useContext(StateContext);
-
-  let chart = null;
-  if (searchState.chartData !== null) {
-    chart = <Bar data={searchState.chartData} />;
-  }
-
-  return (
-    <div
-      ref={sidebarRef}
-      className="w-30 bg-near-white shadow-2 sidebar absolute z-2 mv3 flex flex-column"
-    >
-      <Header />
-      <div className="w-90 center overflow-y-hidden h-100"> {chart}</div>
-    </div>
-  );
-};
 
 const Viewer = () => {
   const mapRef = React.useRef();
@@ -117,7 +96,7 @@ const Viewer = () => {
     country: null,
     hazard: null,
     loading: false,
-    chartData: config,
+    chartData: { type: null, data: null },
   });
   const [search, setSearch] = useState({ countries: null, hazards: null });
 

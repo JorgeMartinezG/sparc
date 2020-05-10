@@ -1,5 +1,6 @@
-import { API_URL, CHART_LABELS } from "../config.js";
+import { API_URL } from "../config.js";
 import bbox from "@turf/bbox";
+import { processLandsLide } from "../hazards/landslide.js";
 
 export const fetchCountries = async (setSearch) => {
   const resp = await fetch(`${API_URL}/countries.json`);
@@ -40,7 +41,7 @@ const addLayer = (layerName, data, map) => {
     map.removeSource(layerName);
   }
 
-  map.fitBounds(bbox(data), { padding: 40 });
+  map.fitBounds(bbox(data), { padding: 100 });
   map.addLayer({
     id: layerName,
     type: "fill",
@@ -50,63 +51,6 @@ const addLayer = (layerName, data, map) => {
     },
     paint: options,
   });
-};
-
-const processLandsLide = (geojson, summary_json, month) => {
-  const admin2Values = summary_json.admin2;
-
-  const colorsMap = {
-    low: "#1d4877",
-    medium: "#fbb021",
-    high: "#f68838",
-    very_high: "#ee3e32",
-  };
-
-  const processedFeatures = geojson.features.map((f) => {
-    const values = admin2Values[f.properties.admin2_code];
-    if (values !== undefined) {
-      let prob_class = colorsMap["low"];
-
-      // Get the probability class associated.
-      Object.keys(values.prob_class).forEach((c) => {
-        const sum = values.prob_class[c].by_month.reduce((a, b) => a + b, 0);
-        if (sum !== 0) {
-          prob_class = colorsMap[c];
-        }
-      });
-
-      const properties = { ...f.properties, prob_class: prob_class };
-
-      return { ...f, properties: properties };
-    }
-    return null;
-  });
-
-  const filtered = processedFeatures.filter((f) => f !== null);
-
-  const geom = {
-    type: "FeatureCollection",
-    features: filtered,
-  };
-
-  // Create a new array of data for chart.
-  const items = ["low", "medium", "high", "very_high"];
-  const datasets = items.map((i) => {
-    return {
-      data: summary_json.prob_class[i].by_month,
-      type: "bar",
-      stack: "prob_class",
-      label: i,
-      backgroundColor: colorsMap[i],
-    };
-  });
-
-  const chartData = {
-    labels: CHART_LABELS,
-    datasets: datasets,
-  };
-
-  return { geom: geom, chartData: chartData };
 };
 
 const processData = (hazard, geojson, summary_json) => {
