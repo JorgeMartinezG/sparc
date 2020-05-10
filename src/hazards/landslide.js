@@ -30,7 +30,7 @@ const getChartDataLandslide = (summary_json) => {
   return { type: "LANDSLIDE", data: chartData };
 };
 
-export const processLandsLide = (geojson, summary_json, month) => {
+export const processLandsLide = (geojson, summary_json) => {
   const admin2Values = summary_json.admin2;
 
   const processedFeatures = geojson.features.map((f) => {
@@ -39,16 +39,22 @@ export const processLandsLide = (geojson, summary_json, month) => {
       return null;
     }
     let prob_class = colorsMap["low"];
+    let by_month = null;
 
     // Get the probability class associated.
     Object.keys(values.prob_class).forEach((c) => {
       const sum = values.prob_class[c].by_month.reduce((a, b) => a + b, 0);
       if (sum !== 0) {
         prob_class = colorsMap[c];
+        by_month = values.prob_class[c].by_month;
       }
     });
 
-    const properties = { ...f.properties, prob_class: prob_class };
+    const properties = {
+      ...f.properties,
+      prob_class: prob_class,
+      by_month: by_month,
+    };
 
     return { ...f, properties: properties };
   });

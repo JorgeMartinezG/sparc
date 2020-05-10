@@ -9,6 +9,7 @@ import { fetchCountries, fetchHazards } from "./components/utils.js";
 import { Icons } from "./components/icons.js";
 import { Sidebar } from "./components/sidebar.js";
 import { MAPBOX_TOKEN } from "./config.js";
+import "mapbox-gl/dist/mapbox-gl.css";
 
 export const StateContext = React.createContext();
 
