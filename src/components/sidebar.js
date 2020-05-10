@@ -1,25 +1,27 @@
-import React, { useContext } from "react";
+import React, { useContext, useMemo } from "react";
 import { Header } from "../components/header.js";
 import { LandslideHazard } from "../hazards/landslide.js";
 import { StateContext } from "../App.js";
 
-export const Sidebar = ({ sidebarRef }) => {
-  const { searchState } = useContext(StateContext);
-  const { type, data } = searchState.chartData;
+const Chart = ({ chartData }) => {
+  const MemoChart = () => {
+    const { type, data } = chartData;
+    console.log("AAAA");
 
-  const getChart = (type) => {
     switch (type) {
       default:
         return <div></div>;
       case "LANDSLIDE":
-        return (
-          <LandslideHazard
-            data={data}
-            countryName={searchState.country.label}
-          />
-        );
+        return <LandslideHazard data={data} countryName={"AAA"} />;
     }
   };
+
+  return useMemo(MemoChart, [chartData]);
+};
+
+export const Sidebar = ({ sidebarRef }) => {
+  const { searchState } = useContext(StateContext);
+  const { chartData } = searchState;
 
   return (
     <div
@@ -28,7 +30,7 @@ export const Sidebar = ({ sidebarRef }) => {
     >
       <Header />
       <div className="w-90 center overflow-y-hidden h-100 pt3">
-        {getChart(type)}
+        <Chart chartData={chartData} />
       </div>
     </div>
   );
