@@ -97,7 +97,7 @@ const Viewer = () => {
     country: null,
     hazard: null,
     loading: false,
-    chartData: { type: null, data: null },
+    chartData: { type: null, data: null, countryName: null },
   });
   const [search, setSearch] = useState({ countries: null, hazards: null });
 

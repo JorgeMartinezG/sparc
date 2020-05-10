@@ -14,13 +14,11 @@ const SearchMenu = ({ trigger }) => {
       return { ...p, loading: true };
     });
 
-    getGeom(map, searchState.country.value, searchState.hazard.value).then(
-      (res) => {
-        setState((p) => {
-          return { ...p, loading: false, chartData: res };
-        });
-      }
-    );
+    getGeom(map, searchState.country, searchState.hazard.value).then((res) => {
+      setState((p) => {
+        return { ...p, loading: false, chartData: res };
+      });
+    });
   };
 
   const customStyles = {

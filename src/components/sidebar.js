@@ -5,14 +5,13 @@ import { StateContext } from "../App.js";
 
 const Chart = ({ chartData }) => {
   const MemoChart = () => {
-    const { type, data } = chartData;
-    console.log("AAAA");
+    const { type, data, country } = chartData;
 
     switch (type) {
       default:
         return <div></div>;
       case "LANDSLIDE":
-        return <LandslideHazard data={data} countryName={"AAA"} />;
+        return <LandslideHazard data={data} country={country} />;
     }
   };
 

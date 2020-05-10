@@ -83,10 +83,10 @@ const addLayer = (layerName, data, map) => {
   });
 };
 
-const processData = (hazard, geojson, summary_json) => {
+const processData = (hazard, geojson, summary_json, country) => {
   switch (hazard) {
     case "landslide":
-      return processLandsLide(geojson, summary_json);
+      return processLandsLide(geojson, summary_json, country);
     default:
       return null;
   }
@@ -94,18 +94,20 @@ const processData = (hazard, geojson, summary_json) => {
 
 export const getGeom = async (map, country, hazard) => {
   // Get country geojson.
+  const { label, value } = country;
+
   const resp = await fetch(
-    `${API_URL}country/${country}/dataset/context/${country}_NHR_ContextLayers.json`
+    `${API_URL}country/${value}/dataset/context/${value}_NHR_ContextLayers.json`
   );
   const geojson = await resp.json();
 
   // Get data per admin2 code, per month, per category.
   const resp_summary = await fetch(
-    `${API_URL}country/${country}/hazard/${hazard}/dataset/summary/${country}_NHR_PopAtRisk_${hazard}_Summary.json`
+    `${API_URL}country/${value}/hazard/${hazard}/dataset/summary/${value}_NHR_PopAtRisk_${hazard}_Summary.json`
   );
   const summary_json = await resp_summary.json();
 
-  const { geom, chartData } = processData(hazard, geojson, summary_json);
+  const { geom, chartData } = processData(hazard, geojson, summary_json, label);
 
   addLayer("country", geom, map);
 

@@ -9,7 +9,7 @@ const colorsMap = {
   very_high: "#ee3e32",
 };
 
-const getChartDataLandslide = (summary_json) => {
+const getChartDataLandslide = (summary_json, country) => {
   // Create a new array of data for chart.
   const items = Object.keys(colorsMap);
   const datasets = items.map((i) => {
@@ -27,10 +27,10 @@ const getChartDataLandslide = (summary_json) => {
     datasets: datasets,
   };
 
-  return { type: "LANDSLIDE", data: chartData };
+  return { type: "LANDSLIDE", data: chartData, country: country };
 };
 
-export const processLandsLide = (geojson, summary_json) => {
+export const processLandsLide = (geojson, summary_json, country) => {
   const admin2Values = summary_json.admin2;
 
   const processedFeatures = geojson.features.map((f) => {
@@ -66,16 +66,16 @@ export const processLandsLide = (geojson, summary_json) => {
     features: filtered,
   };
 
-  const chartData = getChartDataLandslide(summary_json);
+  const chartData = getChartDataLandslide(summary_json, country);
 
   return { geom: geom, chartData: chartData };
 };
 
-export const LandslideHazard = ({ data, countryName }) => {
+export const LandslideHazard = ({ data, country }) => {
   const opts = {
     title: {
       position: "top",
-      text: "Population at Risk by Month for " + countryName,
+      text: "Population at Risk by Month for " + country,
       display: true,
       fontSize: "16",
     },
