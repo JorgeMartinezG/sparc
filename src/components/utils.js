@@ -29,7 +29,7 @@ export const fetchHazards = async (setSearch) => {
   });
 };
 
-const PointDescription = (props) => {
+const PopupDescription = (props) => {
   let val = "";
   if (props.by_month !== "null") {
     val = JSON.parse(props.by_month)[0];
@@ -37,13 +37,16 @@ const PointDescription = (props) => {
 
   return `
     <div>
-      <h5 className="f4 b">${props.admin2_name}</h5>
       <p>
-        <span><strong>Admin 1:</strong></span>
+        <span><strong>admin1: </strong></span>
         ${props.admin1_name}
       </p>
       <p>
-        <span><strong>Value:</strong></span>
+        <span><strong>admin2: </strong></span>
+        ${props.admin2_name}
+      </p>
+      <p>
+        <span><strong>value: </strong></span>
         ${val}
       </p>
     </div>
@@ -77,7 +80,7 @@ const addLayer = (layerName, data, map) => {
   map.on("click", layerName, (e) => {
     const props = e.features[0].properties;
 
-    const description = PointDescription(props);
+    const description = PopupDescription(props);
     let popup = new mapboxgl.Popup();
     popup.setLngLat(e.lngLat).setHTML(description).addTo(map);
   });
