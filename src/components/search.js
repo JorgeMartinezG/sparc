@@ -5,6 +5,8 @@ import { StateContext } from "../App.js";
 import { getGeom } from "./utils.js";
 import { Icon } from "@wfp/ui";
 import { iconSearch } from "@wfp/icons";
+import { notificationStyle } from "@wfp/ui";
+import { ToastContainer, toast } from "react-toastify";
 
 const SearchMenu = ({ trigger }) => {
   const { search, searchState, setState, map } = useContext(StateContext);
@@ -14,11 +16,18 @@ const SearchMenu = ({ trigger }) => {
       return { ...p, loading: true };
     });
 
-    getGeom(map, searchState.country, searchState.hazard.value).then((res) => {
-      setState((p) => {
-        return { ...p, loading: false, chartData: res };
+    getGeom(map, searchState.country, searchState.hazard.value)
+      .then((res) => {
+        setState((p) => {
+          return { ...p, loading: false, chartData: res };
+        });
+      })
+      .catch((e) => {
+        toast.error("Hazard not found for country");
+        setState((p) => {
+          return { ...p, loading: false };
+        });
       });
-    });
   };
 
   const customStyles = {
@@ -66,7 +75,6 @@ const SearchMenu = ({ trigger }) => {
         >
           Go!
         </Button>
-
         {searchState.loading === true ? <Loading /> : null}
       </div>
     </div>
@@ -94,6 +102,7 @@ export const Search = () => {
 
   return (
     <div>
+      <ToastContainer {...notificationStyle} />
       <SearchButton trigger={trigger} />
       <SearchMenu trigger={trigger} />
     </div>
