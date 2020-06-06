@@ -9,6 +9,8 @@ const colorsMap = {
   very_high: "#ee3e32",
 };
 
+const bpColors = ["#F6BDC0", "#F1959B", "#F07470", "#EA4C46", "#DC1C13"];
+
 const getChartDataLandslide = (summary_json, country) => {
   // Create a new array of data for chart.
   const items = Object.keys(colorsMap);
@@ -33,27 +35,29 @@ const getChartDataLandslide = (summary_json, country) => {
 export const processLandsLide = (geojson, summary_json, country) => {
   const admin2Values = summary_json.admin2;
 
+  // Remove repeated values.
+  const breakpoints = [...new Set(summary_json.all.breakpoints.natural)];
+
   const processedFeatures = geojson.features.map((f) => {
     const values = admin2Values[f.properties.admin2_code];
     if (values === undefined) {
       return null;
     }
-    let prob_class = colorsMap["low"];
-    let by_month = null;
 
     // Get the probability class associated.
-    Object.keys(values.prob_class).forEach((c) => {
-      const sum = values.prob_class[c].by_month.reduce((a, b) => a + b, 0);
-      if (sum !== 0) {
-        prob_class = colorsMap[c];
-        by_month = values.prob_class[c].by_month;
-      }
+    const probClassValue = Object.keys(values.prob_class).map((c) => {
+      return values.prob_class[c].by_month[0]; // TODO: Change according to month.
     });
+
+    const sumValue = probClassValue.reduce((a, b) => a + b, 0);
+
+    // Assign color according to breakpoint.
+    const idx = breakpoints.findIndex((e) => e > sumValue);
 
     const properties = {
       ...f.properties,
-      prob_class: prob_class,
-      by_month: by_month,
+      color: bpColors[idx],
+      value: sumValue,
     };
 
     return { ...f, properties: properties };

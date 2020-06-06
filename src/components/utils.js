@@ -31,8 +31,9 @@ export const fetchHazards = async (setSearch) => {
 
 const PopupDescription = (props) => {
   let val = "";
-  if (props.by_month !== "null") {
-    val = JSON.parse(props.by_month)[0];
+
+  if (props.value !== "null") {
+    val = props.value;
   }
 
   return `
@@ -55,7 +56,7 @@ const PopupDescription = (props) => {
 
 const addLayer = (layerName, data, map) => {
   const options = {
-    "fill-color": ["get", "prob_class"],
+    "fill-color": ["get", "color"],
     "fill-opacity": 0.8,
   };
 
