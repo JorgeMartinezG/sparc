@@ -72,7 +72,18 @@ export const processLandsLide = (geojson, summary_json, country) => {
 
   const chartData = getChartDataLandslide(summary_json, country);
 
-  return { geom: geom, chartData: chartData };
+  // Generate data for legend.
+
+  const legendData = breakpoints.map((b, i) => {
+    let val = b.toString();
+    if (i > 0) {
+      val = `${breakpoints[i - 1].toString()} - ${b.toString()}`;
+    }
+
+    return { range: val, color: bpColors[i] };
+  });
+
+  return { geom: geom, chartData: chartData, legendData: legendData };
 };
 
 export const LandslideHazard = ({ data, country }) => {

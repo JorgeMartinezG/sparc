@@ -15,6 +15,31 @@ export const StateContext = React.createContext();
 
 mapboxgl.accessToken = MAPBOX_TOKEN;
 
+const Legend = ({ legendData }) => {
+  if (legendData === null) return null;
+
+  return (
+    <div className="absolute bottom-2 right-2 z-2 bg-light-gray shadow-2 pa2 bt b--interactive-01 bw2">
+      <h3 className="f5 b">Population at risk</h3>
+      <div className="cf mt2">
+        {legendData.map((e) => {
+          return (
+            <div className="tc fl w3">
+              <div
+                style={{ backgroundColor: e.color }}
+                className="w-100 h2"
+              ></div>
+              <div style={{ fontSize: "0.75rem" }} className="center tc b">
+                {e.range}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
 const Viewer = () => {
   const mapRef = React.useRef();
   const sidebarRef = React.useRef();
@@ -97,6 +122,7 @@ const Viewer = () => {
     country: null,
     hazard: null,
     loading: false,
+    legendData: null,
     chartData: { type: null, data: null, countryName: null },
   });
   const [search, setSearch] = useState({ countries: null, hazards: null });
@@ -130,6 +156,7 @@ const Viewer = () => {
       <div ref={mapRef} className="vh-100 relative z-1">
         <Icons sidebarRef={sidebarRef} />
         <Sidebar sidebarRef={sidebarRef} />
+        <Legend legendData={searchState.legendData} />
       </div>
     </StateContext.Provider>
   );

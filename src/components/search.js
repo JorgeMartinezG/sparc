@@ -19,10 +19,16 @@ const SearchMenu = ({ trigger }) => {
     getGeom(map, searchState.country, searchState.hazard.value)
       .then((res) => {
         setState((p) => {
-          return { ...p, loading: false, chartData: res };
+          return {
+            ...p,
+            loading: false,
+            chartData: res.chartData,
+            legendData: res.legendData,
+          };
         });
       })
       .catch((e) => {
+        console.log(e);
         toast.error("Hazard not found for country");
         setState((p) => {
           return { ...p, loading: false };

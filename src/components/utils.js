@@ -111,9 +111,9 @@ export const getGeom = async (map, country, hazard) => {
   );
   const summary_json = await resp_summary.json();
 
-  const { geom, chartData } = processData(hazard, geojson, summary_json, label);
+  const data = processData(hazard, geojson, summary_json, label);
 
-  addLayer("country", geom, map);
+  addLayer("country", data.geom, map);
 
-  return chartData;
+  return data;
 };
