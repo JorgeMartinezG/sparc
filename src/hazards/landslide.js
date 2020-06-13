@@ -1,24 +1,15 @@
 import React from "react";
-import { CHART_LABELS } from "../config.js";
+import { CHART_LABELS, HAZARD_PARAMS } from "../config.js";
 import { Bar } from "react-chartjs-2";
 
-const colorsMap = {
-  low: "#1d4877",
-  medium: "#fbb021",
-  high: "#f68838",
-  very_high: "#ee3e32",
-};
-
-const bpColors = ["#F6BDC0", "#F1959B", "#F07470", "#EA4C46", "#DC1C13"];
-
-const getChartDataLandslide = (summary_json, country) => {
+const getChartData = (summary_json, field, colorsMap) => {
   // Create a new array of data for chart.
   const items = Object.keys(colorsMap);
   const datasets = items.map((i) => {
     return {
-      data: summary_json.prob_class[i].by_month,
+      data: summary_json[field][i].by_month,
       type: "bar",
-      stack: "prob_class",
+      stack: field,
       label: i,
       backgroundColor: colorsMap[i],
     };
@@ -29,10 +20,14 @@ const getChartDataLandslide = (summary_json, country) => {
     datasets: datasets,
   };
 
-  return { type: "LANDSLIDE", data: chartData, country: country };
+  return { data: chartData };
 };
 
-export const processLandsLide = (geojson, summary_json, country) => {
+export const processHazard = (hazard, geojson, summary_json) => {
+  console.log(hazard);
+
+  const { bpColors, colorsMap, field } = HAZARD_PARAMS[hazard];
+
   const admin2Values = summary_json.admin2;
 
   // Remove repeated values.
@@ -45,8 +40,8 @@ export const processLandsLide = (geojson, summary_json, country) => {
     }
 
     // Get the probability class associated.
-    const probClassValue = Object.keys(values.prob_class).map((c) => {
-      return values.prob_class[c].by_month[0]; // TODO: Change according to month.
+    const probClassValue = Object.keys(values[field]).map((c) => {
+      return values[field][c].by_month[0]; // TODO: Change according to month.
     });
 
     const sumValue = probClassValue.reduce((a, b) => a + b, 0);
@@ -70,7 +65,7 @@ export const processLandsLide = (geojson, summary_json, country) => {
     features: filtered,
   };
 
-  const chartData = getChartDataLandslide(summary_json, country);
+  const chartData = getChartData(summary_json, field, colorsMap);
 
   // Generate data for legend.
 
@@ -120,6 +115,32 @@ export const LandslideHazard = ({ data, country }) => {
           back on.
         </p>
       </div>
+    </div>
+  );
+};
+
+export const FloodHazard = ({ data, country }) => {
+  const opts = {
+    title: {
+      position: "top",
+      text: "Population at Risk by Month for " + country,
+      display: true,
+      fontSize: "16",
+    },
+    scales: {
+      xAxes: [
+        {
+          ticks: {
+            fontSize: 14,
+          },
+        },
+      ],
+    },
+  };
+
+  return (
+    <div>
+      <Bar data={data} options={opts} />;
     </div>
   );
 };

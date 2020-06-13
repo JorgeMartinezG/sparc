@@ -1,6 +1,6 @@
 import React, { useContext, useMemo } from "react";
 import { Header } from "../components/header.js";
-import { LandslideHazard } from "../hazards/landslide.js";
+import { LandslideHazard, FloodHazard } from "../hazards/landslide.js";
 import { StateContext } from "../App.js";
 
 const Chart = ({ chartData }) => {
@@ -10,8 +10,10 @@ const Chart = ({ chartData }) => {
     switch (type) {
       default:
         return <div></div>;
-      case "LANDSLIDE":
+      case "landslide":
         return <LandslideHazard data={data} country={country} />;
+      case "flood":
+        return <FloodHazard data={data} country={country} />;
     }
   };
 

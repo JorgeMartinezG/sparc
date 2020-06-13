@@ -1,6 +1,6 @@
 import { API_URL } from "../config.js";
 import bbox from "@turf/bbox";
-import { processLandsLide } from "../hazards/landslide.js";
+import { processHazard } from "../hazards/landslide.js";
 import mapboxgl from "mapbox-gl";
 
 export const fetchCountries = async (setSearch) => {
@@ -87,15 +87,6 @@ const addLayer = (layerName, data, map) => {
   });
 };
 
-const processData = (hazard, geojson, summary_json, country) => {
-  switch (hazard) {
-    case "landslide":
-      return processLandsLide(geojson, summary_json, country);
-    default:
-      return null;
-  }
-};
-
 export const getGeom = async (map, country, hazard) => {
   // Get country geojson.
   const { label, value } = country;
@@ -111,7 +102,8 @@ export const getGeom = async (map, country, hazard) => {
   );
   const summary_json = await resp_summary.json();
 
-  const data = processData(hazard, geojson, summary_json, label);
+  let data = processHazard(hazard, geojson, summary_json);
+  data.chartData = { ...data.chartData, country: label, type: hazard };
 
   addLayer("country", data.geom, map);
 
