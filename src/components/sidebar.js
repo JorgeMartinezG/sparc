@@ -1,6 +1,6 @@
 import React, { useContext, useMemo } from "react";
 import { Header } from "../components/header.js";
-import { LandslideHazard, FloodHazard } from "../hazards/landslide.js";
+import { LandslideHazard, FloodHazard } from "./hazards.js";
 import { StateContext } from "../App.js";
 
 const Chart = ({ chartData }) => {

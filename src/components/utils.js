@@ -1,6 +1,6 @@
 import { API_URL } from "../config.js";
 import bbox from "@turf/bbox";
-import { processHazard } from "../hazards/landslide.js";
+import { processHazard } from "./hazards.js";
 import mapboxgl from "mapbox-gl";
 
 export const fetchCountries = async (setSearch) => {
