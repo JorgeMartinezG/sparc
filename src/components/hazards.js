@@ -81,8 +81,8 @@ export const processHazard = (hazard, geojson, summary_json) => {
   return { geom: geom, chartData: chartData, legendData: legendData };
 };
 
-export const LandslideHazard = ({ data, country }) => {
-  const opts = {
+const Opts = (country) => {
+  return {
     title: {
       position: "top",
       text: "Population at Risk by Month for " + country,
@@ -99,6 +99,10 @@ export const LandslideHazard = ({ data, country }) => {
       ],
     },
   };
+};
+
+export const LandslideHazard = ({ data, country }) => {
+  const opts = Opts(country);
 
   return (
     <div>
@@ -120,23 +124,7 @@ export const LandslideHazard = ({ data, country }) => {
 };
 
 export const FloodHazard = ({ data, country }) => {
-  const opts = {
-    title: {
-      position: "top",
-      text: "Population at Risk by Month for " + country,
-      display: true,
-      fontSize: "16",
-    },
-    scales: {
-      xAxes: [
-        {
-          ticks: {
-            fontSize: 14,
-          },
-        },
-      ],
-    },
-  };
+  const opts = Opts(country);
 
   return (
     <div>
