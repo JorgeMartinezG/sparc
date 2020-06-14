@@ -44,15 +44,16 @@ export const processHazard = (hazard, geojson, summary_json) => {
       return values[field][c].by_month[0]; // TODO: Change according to month.
     });
 
-    const sumValue = probClassValue.reduce((a, b) => a + b, 0);
+    //const maxValue = probClassValue.reduce((a, b) => a + b, 0) / 4;
+    const maxValue = Math.max(...probClassValue);
 
     // Assign color according to breakpoint.
-    const idx = breakpoints.findIndex((e) => e > sumValue);
+    const idx = breakpoints.findIndex((e) => e >= maxValue);
 
     const properties = {
       ...f.properties,
       color: bpColors[idx],
-      value: sumValue,
+      value: maxValue,
     };
 
     return { ...f, properties: properties };
@@ -106,7 +107,7 @@ export const LandslideHazard = ({ data, country }) => {
 
   return (
     <div>
-      <Bar data={data} options={opts} />;
+      <Bar data={data} options={opts} />
       <div className="w-80 center">
         <p className="f6">
           The chart above displays the number of people living in
@@ -128,7 +129,37 @@ export const FloodHazard = ({ data, country }) => {
 
   return (
     <div>
-      <Bar data={data} options={opts} />;
+      <Bar data={data} options={opts} />
+      <div className="w-80 center"></div>
+      <p className="mb2">
+        The chart above displays the number of people living in flood-prone
+        areas, who may potentially be exposed to flood per month. The different
+        colours indicate the probability expressed as or “return period” (rp) of
+        those people being affected. The darker the shade, the more likely that
+        they will be affected, as shown below.
+      </p>
+      <ul>
+        <li>
+          <strong>Rp25:</strong> 1 event in 25 years; Probability of occurrence
+          in any given year (4% chance).
+        </li>
+        <li>
+          <strong>Rp100:</strong> 1 event in 100 years; Probability of
+          occurrence in any given year (1% chance)
+        </li>
+        <li>
+          <strong>Rp1000:</strong> 1 event in 1000 years; Probability of
+          occurrence in any given year (0.1% chance)
+        </li>
+      </ul>
+      <p className="mt2">
+        These recurrence intervals give the estimated time interval between
+        events of a similar size or intensity, and the greater the magnitude of
+        the flood event the less chance of occurrence and viceversa. You can
+        choose to display only certain levels of probability by toggling the
+        interactive legend under the chart: click on a probability class once to
+        turn it off, click it again to turn it back on.
+      </p>
     </div>
   );
 };

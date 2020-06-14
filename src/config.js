@@ -17,7 +17,15 @@ const DEFAULT_CHART_LABELS = [
 
 export const HAZARD_PARAMS = {
   landslide: {
-    bpColors: ["#F6BDC0", "#F1959B", "#F07470", "#EA4C46", "#DC1C13"],
+    bpColors: [
+      "#ff4d4d",
+      "#ff3333",
+      "#ff1a1a",
+      "#ff0000",
+      "#e60000",
+      "#cc0000",
+      "#b30000",
+    ],
     colorsMap: {
       low: "#1d4877",
       medium: "#fbb021",
@@ -27,7 +35,20 @@ export const HAZARD_PARAMS = {
     field: "prob_class",
   },
   flood: {
-    bpColors: ["#74D7FB", "#56C3E4", "#2CB4DD", "#1D8DAF", "#1D8DAF"],
+    bpColors: [
+      "#9999ff",
+      "#7f7fff",
+      "#6666ff",
+      "#4c4cff",
+      "#3232ff",
+      "#1919ff",
+      "#0000ff",
+      "#0000e5",
+      "#0000cc",
+      "#0000b2",
+      "#000099",
+      "#00007f",
+    ],
     colorsMap: {
       "25": "#DAF7A6",
       "50": "#FFC300",
