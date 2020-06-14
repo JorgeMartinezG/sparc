@@ -1,6 +1,6 @@
 import React, { useContext, useMemo } from "react";
 import { Header } from "../components/header.js";
-import { LandslideHazard, FloodHazard } from "./hazards.js";
+import { LandslideHazard, FloodHazard, CycloneHazard } from "./hazards.js";
 import { StateContext } from "../App.js";
 
 const Chart = ({ chartData }) => {
@@ -14,6 +14,10 @@ const Chart = ({ chartData }) => {
         return <LandslideHazard data={data} country={country} />;
       case "flood":
         return <FloodHazard data={data} country={country} />;
+      case "cyclone":
+        return <CycloneHazard data={data} country={country} />;
+      case "drought":
+        return <CycloneHazard data={data} country={country} />;
     }
   };
 
