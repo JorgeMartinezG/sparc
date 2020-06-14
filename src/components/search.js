@@ -26,6 +26,7 @@ const SearchMenu = ({ trigger }) => {
             legendData: res.legendData,
           };
         });
+        trigger.current.classList.toggle("is_open");
       })
       .catch((e) => {
         console.log(e);
