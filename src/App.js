@@ -19,7 +19,7 @@ const Legend = ({ legendData }) => {
   if (legendData === null) return null;
 
   return (
-    <div className="absolute bottom-2 right-2 z-2 bg-light-gray shadow-2 pa2 bt b--interactive-01 bw2">
+    <div className="absolute bottom-2 right-2 z-1 bg-light-gray shadow-2 pa2 bt b--interactive-01 bw2">
       <h3 className="f5 b">Population at risk</h3>
       <div className="cf mt2">
         {legendData.map((e) => {

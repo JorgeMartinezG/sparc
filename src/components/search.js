@@ -106,9 +106,11 @@ const SearchButton = ({ trigger }) => {
 export const Search = () => {
   const trigger = useRef();
 
+  const notification_style = { ...notificationStyle, position: "top-right" };
+
   return (
     <div>
-      <ToastContainer {...notificationStyle} />
+      <ToastContainer {...notification_style} />
       <SearchButton trigger={trigger} />
       <SearchMenu trigger={trigger} />
     </div>
