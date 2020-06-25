@@ -49,10 +49,13 @@ export const processHazard = (hazard, geojson, summary_json) => {
       probClassValue.reduce((a, b) => a + b, 0) / probClassValue.length
     );
     */
-    const computedValue = Math.max(...probClassValue);
+    const computedValue = Math.min(
+      Math.max(...probClassValue),
+      breakpoints[breakpoints.length - 1]
+    );
 
     // Assign color according to breakpoint.
-    const idx = breakpoints.findIndex((e) => e > computedValue);
+    const idx = breakpoints.findIndex((e) => e >= computedValue);
 
     const properties = {
       ...f.properties,
