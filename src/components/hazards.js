@@ -23,13 +23,12 @@ const getChartData = (summary_json, field, colorsMap) => {
   return { data: chartData };
 };
 
-export const processHazard = (hazard, geojson, summary_json, month) => {
+export const processHazard = (hazard, geojson, summary, month) => {
   const { bpColors, colorsMap, field } = HAZARD_PARAMS[hazard];
-
-  const admin2Values = summary_json.admin2;
+  const admin2Values = summary.admin2;
 
   // Remove repeated values.
-  const breakpoints = [...new Set(summary_json.all.breakpoints.natural)];
+  const breakpoints = [...new Set(summary.all.breakpoints.natural)];
 
   const processedFeatures = geojson.features.map((f) => {
     const values = admin2Values[f.properties.admin2_code];
@@ -76,7 +75,7 @@ export const processHazard = (hazard, geojson, summary_json, month) => {
     features: filtered,
   };
 
-  const chartData = getChartData(summary_json, field, colorsMap);
+  const chartData = getChartData(summary, field, colorsMap);
 
   // Generate data for legend.
 
@@ -89,7 +88,13 @@ export const processHazard = (hazard, geojson, summary_json, month) => {
     return { range: val, color: bpColors[i] };
   });
 
-  return { geom: geom, chartData: chartData, legendData: legendData };
+  return {
+    geojson: geojson,
+    summary: summary,
+    geom: geom,
+    chartData: chartData,
+    legendData: legendData,
+  };
 };
 
 const Opts = (country) => {

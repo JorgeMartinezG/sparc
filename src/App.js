@@ -51,9 +51,9 @@ const Viewer = () => {
     hazard: null,
     loading: false,
     legendData: null,
+    geom: null,
     month: null,
     chartData: { type: null, data: null, countryName: null },
-    responseData: null,
   });
   const [search, setSearch] = useState({ countries: null, hazards: null });
 

@@ -1,6 +1,5 @@
 import { API_URL } from "../config.js";
 import bbox from "@turf/bbox";
-import { processHazard } from "./hazards.js";
 import mapboxgl from "mapbox-gl";
 
 export const fetchCountries = async (setSearch) => {
@@ -61,10 +60,7 @@ export const addLayer = (layerName, data, map) => {
   };
 
   if (map.getLayer(layerName)) {
-    map.removeLayer(layerName);
-  }
-  if (map.getSource(layerName)) {
-    map.removeSource(layerName);
+    map.getSource(layerName).setData(data);
   }
 
   map.fitBounds(bbox(data), { padding: 100 });
@@ -87,9 +83,9 @@ export const addLayer = (layerName, data, map) => {
   });
 };
 
-export const getGeom = async (map, country, hazard, month) => {
+export const getResponse = async (country, hazard) => {
   // Get country geojson.
-  const { label, value } = country;
+  const { value } = country;
 
   const resp = await fetch(
     `${API_URL}country/${value}/dataset/context/${value}_NHR_ContextLayers.json`
@@ -100,14 +96,7 @@ export const getGeom = async (map, country, hazard, month) => {
   const resp_summary = await fetch(
     `${API_URL}country/${value}/hazard/${hazard}/dataset/summary/${value}_NHR_PopAtRisk_${hazard}_Summary.json`
   );
-  const summary_json = await resp_summary.json();
+  const summary = await resp_summary.json();
 
-  let data = processHazard(hazard, geojson, summary_json, month);
-  data.chartData = { ...data.chartData, country: label, type: hazard };
-
-  data = { ...data, responseData: { geom: geojson, summary: summary_json } };
-
-  addLayer("country", data.geom, map);
-
-  return data;
+  return { summary: summary, geojson: geojson };
 };

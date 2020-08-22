@@ -1,7 +1,6 @@
 import React, { useContext } from "react";
 import { StateContext } from "../App.js";
 import { CHART_LABELS } from "../config.js";
-import { addLayer } from "./utils.js";
 import { processHazard } from "./hazards.js";
 
 export const MonthBar = ({ map }) => {
@@ -14,8 +13,8 @@ export const MonthBar = ({ map }) => {
   const handleMonth = (idx) => {
     const data = processHazard(
       searchState.hazard.value,
-      searchState.responseData.geom,
-      searchState.responseData.summary,
+      searchState.geojson,
+      searchState.summary,
       idx
     );
 

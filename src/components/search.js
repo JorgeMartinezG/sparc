@@ -2,7 +2,8 @@ import React, { useContext, useRef } from "react";
 import Select from "react-select";
 import { Button, Loading } from "@wfp/ui";
 import { StateContext } from "../App.js";
-import { getGeom } from "./utils.js";
+import { getResponse, addLayer } from "./utils.js";
+import { processHazard } from "./hazards.js";
 import { Icon } from "@wfp/ui";
 import { iconSearch } from "@wfp/icons";
 import { notificationStyle } from "@wfp/ui";
@@ -15,25 +16,34 @@ const SearchMenu = ({ trigger }) => {
     setState((p) => {
       return { ...p, loading: true };
     });
+    const hazardVal = searchState.hazard.value;
 
-    getGeom(
-      map,
-      searchState.country,
-      searchState.hazard.value,
-      searchState.month
-    )
+    getResponse(searchState.country, hazardVal)
+      .then((res) =>
+        processHazard(hazardVal, res.geojson, res.summary, searchState.month)
+      )
       .then((res) => {
+        let chartData = res.chartData;
+        chartData = {
+          ...chartData,
+          country: searchState.country.label,
+          type: hazardVal,
+        };
+
         setState((p) => {
           return {
             ...p,
             loading: false,
-            chartData: res.chartData,
+            chartData: chartData,
             legendData: res.legendData,
             month: 0,
-            responseData: res.responseData,
+            geojson: res.geojson,
+            summary: res.summary,
           };
         });
+
         trigger.current.classList.toggle("is_open");
+        addLayer("country", res.geom, map);
       })
       .catch((e) => {
         console.log(e);
