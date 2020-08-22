@@ -16,7 +16,12 @@ const SearchMenu = ({ trigger }) => {
       return { ...p, loading: true };
     });
 
-    getGeom(map, searchState.country, searchState.hazard.value)
+    getGeom(
+      map,
+      searchState.country,
+      searchState.hazard.value,
+      searchState.month
+    )
       .then((res) => {
         setState((p) => {
           return {
@@ -24,6 +29,8 @@ const SearchMenu = ({ trigger }) => {
             loading: false,
             chartData: res.chartData,
             legendData: res.legendData,
+            month: 0,
+            responseData: res.responseData,
           };
         });
         trigger.current.classList.toggle("is_open");

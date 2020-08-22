@@ -23,9 +23,7 @@ const getChartData = (summary_json, field, colorsMap) => {
   return { data: chartData };
 };
 
-export const processHazard = (hazard, geojson, summary_json) => {
-  console.log(hazard);
-
+export const processHazard = (hazard, geojson, summary_json, month) => {
   const { bpColors, colorsMap, field } = HAZARD_PARAMS[hazard];
 
   const admin2Values = summary_json.admin2;
@@ -39,9 +37,14 @@ export const processHazard = (hazard, geojson, summary_json) => {
       return null;
     }
 
+    let month_idx = month;
+    if (month === null) {
+      month_idx = 0;
+    }
+
     // Get the probability class associated.
     const probClassValue = Object.keys(values[field]).map((c) => {
-      return values[field][c].by_month[0]; // TODO: Change according to month.
+      return values[field][c].by_month[month_idx];
     });
 
     /*

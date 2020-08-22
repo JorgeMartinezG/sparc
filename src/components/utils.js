@@ -54,7 +54,7 @@ const PopupDescription = (props) => {
   `;
 };
 
-const addLayer = (layerName, data, map) => {
+export const addLayer = (layerName, data, map) => {
   const options = {
     "fill-color": ["get", "color"],
     "fill-opacity": 0.8,
@@ -87,7 +87,7 @@ const addLayer = (layerName, data, map) => {
   });
 };
 
-export const getGeom = async (map, country, hazard) => {
+export const getGeom = async (map, country, hazard, month) => {
   // Get country geojson.
   const { label, value } = country;
 
@@ -102,8 +102,10 @@ export const getGeom = async (map, country, hazard) => {
   );
   const summary_json = await resp_summary.json();
 
-  let data = processHazard(hazard, geojson, summary_json);
+  let data = processHazard(hazard, geojson, summary_json, month);
   data.chartData = { ...data.chartData, country: label, type: hazard };
+
+  data = { ...data, responseData: { geom: geojson, summary: summary_json } };
 
   addLayer("country", data.geom, map);
 

@@ -1,7 +1,8 @@
 @import "~@wfp/ui/source/globals/scss/vars";
 @import "tachyons";
 
-.bg-interactive-01 {
+.bg-interactive-01,
+.hover-interactive-01:hover {
 	background-color: $interactive-01;
 }
 
