@@ -101,7 +101,7 @@ const Opts = (country) => {
   return {
     title: {
       position: "top",
-      text: "Population at Risk by Month for " + country,
+      text: "Population at Risk for admin0 " + country,
       display: true,
       fontSize: "16",
     },
