@@ -32,7 +32,12 @@ export const processHazard = (hazard, geojson, summary, month) => {
   const processedFeatures = geojson.features.map((f) => {
     const values = admin2Values[f.properties.admin2_code];
     if (values === undefined) {
-      return null;
+      const properties = {
+        ...f.properties,
+        color: bpColors[0],
+        value: 0,
+      };
+      return { ...f, properties: properties };
     }
 
     let month_idx = month;
