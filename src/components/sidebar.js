@@ -2,23 +2,62 @@ import React, { useContext, useMemo } from "react";
 import { Header } from "../components/header.js";
 import { LandslideHazard, FloodHazard, CycloneHazard } from "./hazards.js";
 import { StateContext } from "../App.js";
+import { Bar } from "react-chartjs-2";
+
+const Opts = (country) => {
+  return {
+    title: {
+      position: "top",
+      text: "Population at Risk for admin0 " + country,
+      display: true,
+      fontSize: "16",
+    },
+    scales: {
+      xAxes: [
+        {
+          ticks: {
+            fontSize: 14,
+          },
+        },
+      ],
+    },
+  };
+};
 
 const Chart = ({ chartData }) => {
   const MemoChart = () => {
     const { type, data, country } = chartData;
+    const opts = Opts(country);
 
+    let chartInfo = null;
     switch (type) {
       default:
-        return <div></div>;
+        chartInfo = <div></div>;
+        break;
       case "landslide":
-        return <LandslideHazard data={data} country={country} />;
+        chartInfo = <LandslideHazard />;
+        break;
       case "flood":
-        return <FloodHazard data={data} country={country} />;
+        chartInfo = <FloodHazard />;
+        break;
       case "cyclone":
-        return <CycloneHazard data={data} country={country} />;
+        chartInfo = <CycloneHazard />;
+        break;
       case "drought":
-        return <CycloneHazard data={data} country={country} />;
+        chartInfo = <CycloneHazard />;
+        break;
     }
+
+    if (country === undefined) {
+      return null;
+    }
+
+    return (
+      <div className="w-90 center overflow-y-scroll h-100 pt3">
+        <Bar data={data} options={opts} />
+        {chartInfo}
+      </div>
+    );
   };
 
   return useMemo(MemoChart, [chartData]);
@@ -34,9 +73,7 @@ export const Sidebar = ({ sidebarRef }) => {
       className="w-30 bg-near-white shadow-2 sidebar absolute z-2 mv3 flex flex-column"
     >
       <Header />
-      <div className="w-90 center overflow-y-hidden h-100 pt3">
-        <Chart chartData={chartData} />
-      </div>
+      <Chart chartData={chartData} />
     </div>
   );
 };
