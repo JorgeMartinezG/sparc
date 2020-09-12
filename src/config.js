@@ -1,4 +1,4 @@
-export const API_URL = "http://sparc.wfp.org/api/data/";
+export const API_URL = "http://sparc.wfp.org/api/";
 
 const DEFAULT_CHART_LABELS = [
   "January",

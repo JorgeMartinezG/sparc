@@ -19,9 +19,23 @@ const SearchMenu = ({ trigger }) => {
     const hazardVal = searchState.hazard.value;
 
     getResponse(searchState.country, hazardVal)
-      .then((res) =>
-        processHazard(hazardVal, res.geojson, res.summary, searchState.month)
-      )
+      .then((res) => {
+        setState((p) => {
+          return {
+            ...p,
+            geojson: res.geojson,
+            summary: res.summary,
+            dashboard: res.dashboard,
+          };
+        });
+
+        return processHazard(
+          hazardVal,
+          res.geojson,
+          res.summary,
+          searchState.month
+        );
+      })
       .then((res) => {
         let chartData = res.chartData;
         chartData = {
@@ -37,8 +51,6 @@ const SearchMenu = ({ trigger }) => {
             chartData: chartData,
             legendData: res.legendData,
             month: 0,
-            geojson: res.geojson,
-            summary: res.summary,
           };
         });
 

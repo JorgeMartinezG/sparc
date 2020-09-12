@@ -3,7 +3,7 @@ import bbox from "@turf/bbox";
 import mapboxgl from "mapbox-gl";
 
 export const fetchCountries = async (setSearch) => {
-  const resp = await fetch(`${API_URL}/countries.json`);
+  const resp = await fetch(`${API_URL}data//countries.json`);
   const jsonObj = await resp.json();
 
   const selectCountries = jsonObj.countries.map((o) => {
@@ -16,7 +16,7 @@ export const fetchCountries = async (setSearch) => {
 };
 
 export const fetchHazards = async (setSearch) => {
-  const resp = await fetch(`${API_URL}/hazards.json`);
+  const resp = await fetch(`${API_URL}data//hazards.json`);
   const jsonObj = await resp.json();
 
   const selectHazards = jsonObj.hazards.map((o) => {
@@ -88,15 +88,20 @@ export const getResponse = async (country, hazard) => {
   const { value } = country;
 
   const resp = await fetch(
-    `${API_URL}country/${value}/dataset/context/${value}_NHR_ContextLayers.json`
+    `${API_URL}data/country/${value}/dataset/context/${value}_NHR_ContextLayers.json`
   );
   const geojson = await resp.json();
 
   // Get data per admin2 code, per month, per category.
   const resp_summary = await fetch(
-    `${API_URL}country/${value}/hazard/${hazard}/dataset/summary/${value}_NHR_PopAtRisk_${hazard}_Summary.json`
+    `${API_URL}data/country/${value}/hazard/${hazard}/dataset/summary/${value}_NHR_PopAtRisk_${hazard}_Summary.json`
   );
   const summary = await resp_summary.json();
 
-  return { summary: summary, geojson: geojson };
+  const resp_dashboard = await fetch(
+    `${API_URL}dashboard/country/${value}/hazard/${hazard}.json`
+  );
+  const dashboard = await resp_dashboard.json();
+
+  return { summary: summary, geojson: geojson, dashboard: dashboard };
 };

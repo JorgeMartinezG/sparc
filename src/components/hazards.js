@@ -93,8 +93,6 @@ export const processHazard = (hazard, geojson, summary, month) => {
   });
 
   return {
-    geojson: geojson,
-    summary: summary,
     geom: geom,
     chartData: chartData,
     legendData: legendData,

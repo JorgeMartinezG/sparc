@@ -54,6 +54,7 @@ const Viewer = () => {
     geom: null,
     month: null,
     chartData: { type: null, data: null, countryName: null },
+    dashboard: null,
   });
   const [search, setSearch] = useState({ countries: null, hazards: null });
 
