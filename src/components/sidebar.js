@@ -64,14 +64,15 @@ const Chart = ({ chartData }) => {
   return useMemo(MemoChart, [chartData]);
 };
 
-const SidebarTabs = ({ chartData }) => {
+const SidebarTabs = ({ searchState }) => {
+  const { chartData, dashboard } = searchState;
   return (
     <Tabs className="mb2 navlist center">
       <Tab label="Chart">
         <Chart chartData={chartData} />
       </Tab>
       <Tab label="Layers">
-        <div className="some-content">Content for second tab goes here.</div>
+        <Layers dashboard={dashboard} />
       </Tab>
       <Tab label="Filters">
         <div className="some-content">Content for third tab goes here.</div>
@@ -80,9 +81,23 @@ const SidebarTabs = ({ chartData }) => {
   );
 };
 
+const Layers = ({ dashboard }) => {
+  const layers = dashboard.sidebar.ui.layers;
+  const filteredlayers = dashboard.featurelayers.filter((l) =>
+    layers.includes(l.id)
+  );
+
+  return (
+    <div>
+      {filteredlayers.map((l) => (
+        <div>{l.title}</div>
+      ))}
+    </div>
+  );
+};
+
 export const Sidebar = ({ sidebarRef }) => {
   const { searchState } = useContext(StateContext);
-  const { chartData } = searchState;
 
   return (
     <div
@@ -91,7 +106,7 @@ export const Sidebar = ({ sidebarRef }) => {
     >
       <Header />
       {searchState.status === "SUCCESS" ? (
-        <SidebarTabs chartData={chartData} />
+        <SidebarTabs searchState={searchState} />
       ) : null}
     </div>
   );
