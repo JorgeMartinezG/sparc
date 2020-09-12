@@ -49,7 +49,7 @@ const Viewer = () => {
   const [searchState, setState] = useState({
     country: null,
     hazard: null,
-    loading: false,
+    status: "IDLE",
     legendData: null,
     geom: null,
     month: null,

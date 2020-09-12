@@ -14,7 +14,7 @@ const SearchMenu = ({ trigger }) => {
 
   const getData = () => {
     setState((p) => {
-      return { ...p, loading: true };
+      return { ...p, status: "FETCH" };
     });
     const hazardVal = searchState.hazard.value;
 
@@ -33,7 +33,7 @@ const SearchMenu = ({ trigger }) => {
         setState((p) => {
           return {
             ...p,
-            loading: false,
+            status: "SUCCESS",
             chartData: chartData,
             legendData: res.legendData,
             month: 0,
@@ -49,7 +49,7 @@ const SearchMenu = ({ trigger }) => {
         console.log(e);
         toast.error("Hazard not found for country");
         setState((p) => {
-          return { ...p, loading: false };
+          return { ...p, status: "ERROR" };
         });
       });
   };
@@ -99,7 +99,7 @@ const SearchMenu = ({ trigger }) => {
         >
           Go!
         </Button>
-        {searchState.loading === true ? <Loading /> : null}
+        {searchState.status === "FETCH" ? <Loading /> : null}
       </div>
     </div>
   );

@@ -3,6 +3,7 @@ import { Header } from "../components/header.js";
 import { LandslideHazard, FloodHazard, CycloneHazard } from "./hazards.js";
 import { StateContext } from "../App.js";
 import { Bar } from "react-chartjs-2";
+import { Tab, Tabs } from "@wfp/ui";
 
 const Opts = (country) => {
   return {
@@ -63,6 +64,22 @@ const Chart = ({ chartData }) => {
   return useMemo(MemoChart, [chartData]);
 };
 
+const SidebarTabs = ({ chartData }) => {
+  return (
+    <Tabs className="mb2 navlist center">
+      <Tab label="Chart">
+        <Chart chartData={chartData} />
+      </Tab>
+      <Tab label="Layers">
+        <div className="some-content">Content for second tab goes here.</div>
+      </Tab>
+      <Tab label="Filters">
+        <div className="some-content">Content for third tab goes here.</div>
+      </Tab>
+    </Tabs>
+  );
+};
+
 export const Sidebar = ({ sidebarRef }) => {
   const { searchState } = useContext(StateContext);
   const { chartData } = searchState;
@@ -73,7 +90,9 @@ export const Sidebar = ({ sidebarRef }) => {
       className="w-30 bg-near-white shadow-2 sidebar absolute z-2 mv3 flex flex-column"
     >
       <Header />
-      <Chart chartData={chartData} />
+      {searchState.status === "SUCCESS" ? (
+        <SidebarTabs chartData={chartData} />
+      ) : null}
     </div>
   );
 };
