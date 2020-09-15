@@ -15,7 +15,8 @@ export const MonthBar = ({ map }) => {
       searchState.hazard.value,
       searchState.geojson,
       searchState.summary,
-      idx
+      idx,
+      searchState.dashboard
     );
 
     map.getSource("popatrisk").setData(data.geom);
