@@ -4,6 +4,7 @@ import { LandslideHazard, FloodHazard, CycloneHazard } from "./hazards.js";
 import { StateContext } from "../App.js";
 import { Bar } from "react-chartjs-2";
 import { Tab, Tabs } from "@wfp/ui";
+import Select from "react-select";
 
 const Opts = (country) => {
   return {
@@ -64,40 +65,55 @@ const Chart = ({ chartData }) => {
   return useMemo(MemoChart, [chartData]);
 };
 
-const SidebarTabs = ({ searchState }) => {
-  const { chartData, dashboard } = searchState;
+const SidebarTabs = ({ searchState, map }) => {
+  const { chartData, dashboard, layers } = searchState;
   return (
     <Tabs className="mb2 navlist center">
       <Tab label="Chart">
         <Chart chartData={chartData} />
       </Tab>
-      <Tab label="Layers">
-        <Layers dashboard={dashboard} />
-      </Tab>
-      <Tab label="Filters">
-        <div className="some-content">Content for third tab goes here.</div>
+      <Tab label="Options">
+        <Options dashboard={dashboard} map={map} layers={layers} />
       </Tab>
     </Tabs>
   );
 };
 
-const Layers = ({ dashboard }) => {
-  const layers = dashboard.sidebar.ui.layers;
+const Options = ({ dashboard, map, layers }) => {
+  const hazardLayers = dashboard.sidebar.ui.layers;
   const filteredlayers = dashboard.featurelayers.filter((l) =>
-    layers.includes(l.id)
+    hazardLayers.includes(l.id)
   );
 
+  const handleLayer = (opt, map) => {
+    // Get layers that are new.
+
+    // Get layers that were removed.
+    const ids = opt.map((l) => l.id);
+    layers.filter((l) => !ids.includes(l)).map((l) => map.removeLayer(l));
+  };
+
   return (
-    <div>
-      {filteredlayers.map((l) => (
-        <div>{l.title}</div>
-      ))}
+    <div className="w-90 center h-100">
+      <p className="f5 pv2 b">Layers</p>
+
+      <Select
+        classNamePrefix="react-select"
+        isMulti={true}
+        getOptionLabel={(option) => option.title}
+        getOptionValue={(option) => option.id}
+        options={filteredlayers}
+        className="b"
+        placeholder="Search layer"
+        defaultValue={filteredlayers.filter((l) => l.id === "popatrisk")[0]}
+        onChange={(opt) => handleLayer(opt, map)}
+      />
     </div>
   );
 };
 
 export const Sidebar = ({ sidebarRef }) => {
-  const { searchState } = useContext(StateContext);
+  const { searchState, map } = useContext(StateContext);
 
   return (
     <div
@@ -106,7 +122,7 @@ export const Sidebar = ({ sidebarRef }) => {
     >
       <Header />
       {searchState.status === "SUCCESS" ? (
-        <SidebarTabs searchState={searchState} />
+        <SidebarTabs searchState={searchState} map={map} />
       ) : null}
     </div>
   );

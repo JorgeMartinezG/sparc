@@ -6,6 +6,10 @@
 	background-color: $interactive-01;
 }
 
+.hover-color-interactive-01:hover {
+	color: $interactive-01;
+}
+
 .b--interactive-01 {
 	border-color: $interactive-01;
 }
@@ -35,6 +39,15 @@
 	left: 3rem;
 }
 
+.wfp--tab-content {
+	overflow-y: scroll !important;
+}
+
 .navlist {
-	width: 40% !important;
+	overflow: visible !important;
+}
+
+.react-select__menu {
+	position: relative !important;
+	z-index: 9999 !important;
 }

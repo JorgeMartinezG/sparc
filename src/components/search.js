@@ -43,7 +43,7 @@ const SearchMenu = ({ trigger }) => {
           country: searchState.country.label,
           type: hazardVal,
         };
-
+        const defaultLayer = "popatrisk";
         setState((p) => {
           return {
             ...p,
@@ -51,11 +51,12 @@ const SearchMenu = ({ trigger }) => {
             chartData: chartData,
             legendData: res.legendData,
             month: 0,
+            layers: [defaultLayer],
           };
         });
 
         trigger.current.classList.toggle("is_open");
-        addLayer("country", res.geom, map);
+        addLayer(defaultLayer, res.geom, map);
       })
       .catch((e) => {
         console.log(e);

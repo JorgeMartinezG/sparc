@@ -18,7 +18,7 @@ export const MonthBar = ({ map }) => {
       idx
     );
 
-    map.getSource("country").setData(data.geom);
+    map.getSource("popatrisk").setData(data.geom);
 
     setState((p) => {
       return {
