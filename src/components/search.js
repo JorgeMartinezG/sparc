@@ -33,7 +33,8 @@ const SearchMenu = ({ trigger }) => {
           hazardVal,
           res.geojson,
           res.summary,
-          searchState.month
+          searchState.month,
+          res.dashboard
         );
       })
       .then((res) => {

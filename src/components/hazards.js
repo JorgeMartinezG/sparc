@@ -22,12 +22,24 @@ const getChartData = (summary_json, field, colorsMap) => {
   return { data: chartData };
 };
 
-export const processHazard = (hazard, geojson, summary, month) => {
-  const { bpColors, colorsMap, field } = HAZARD_PARAMS[hazard];
+export const processHazard = (hazard, geojson, summary, month, dashboard) => {
+  const { colorsMap, field } = HAZARD_PARAMS[hazard];
   const admin2Values = summary.admin2;
 
-  // Remove repeated values.
-  const breakpoints = [...new Set(summary.all.breakpoints.natural)];
+  const featureLayer = dashboard.featurelayers.filter(
+    (l) => l.id === "popatrisk"
+  )[0];
+
+  const style = featureLayer.carto.styles.filter((s) => s.id === "default")[0];
+  const symbolizer = style.symbolizers.filter((s) => s.id === "default")[0];
+
+  const breakpointStr = symbolizer.dynamic.options.breakpoints
+    .split("_")
+    .slice(1)
+    .join("_");
+  const bpColors = symbolizer.dynamic.options.colors.ramp;
+
+  const breakpoints = [...new Set(summary.all.breakpoints[breakpointStr])];
 
   const processedFeatures = geojson.features.map((f) => {
     const values = admin2Values[f.properties.admin2_code];
