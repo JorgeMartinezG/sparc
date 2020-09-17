@@ -1,5 +1,6 @@
-import React, { useContext, useMemo } from "react";
+import React, { useContext, useMemo, useState, useEffect } from "react";
 import { Header } from "../components/header.js";
+import { handleLayers } from "../components/layers.js";
 import { LandslideHazard, FloodHazard, CycloneHazard } from "./hazards.js";
 import { StateContext } from "../App.js";
 import { Bar } from "react-chartjs-2";
@@ -66,31 +67,44 @@ const Chart = ({ chartData }) => {
 };
 
 const SidebarTabs = ({ searchState, map }) => {
-  const { chartData, dashboard, layers } = searchState;
+  const { chartData } = searchState;
   return (
     <Tabs className="mb2 navlist center">
       <Tab label="Chart">
         <Chart chartData={chartData} />
       </Tab>
       <Tab label="Options">
-        <Options dashboard={dashboard} map={map} layers={layers} />
+        <Options />
       </Tab>
     </Tabs>
   );
 };
 
-const Options = ({ dashboard, map, layers }) => {
+const Options = () => {
+  const { searchState, map } = useContext(StateContext);
+  const { dashboard } = searchState;
+
   const hazardLayers = dashboard.sidebar.ui.layers;
   const filteredlayers = dashboard.featurelayers.filter((l) =>
     hazardLayers.includes(l.id)
   );
 
-  const handleLayer = (opt, map) => {
+  const defaultArray = filteredlayers.filter((l) => l.id === "popatrisk");
+
+  const [layers, setLayers] = useState(defaultArray);
+
+  useEffect(() => {
+    handleLayers(layers, searchState, map);
+  }, [layers, searchState, map]);
+
+  const handleLayer = (opt) => {
     // Get layers that are new.
 
     // Get layers that were removed.
-    const ids = opt.map((l) => l.id);
-    layers.filter((l) => !ids.includes(l)).map((l) => map.removeLayer(l));
+    // const ids = opt.map((l) => l.id);
+    // layers.filter((l) => !ids.includes(l)).map((l) => map.removeLayer(l));
+
+    setLayers(opt);
   };
 
   return (
@@ -105,8 +119,8 @@ const Options = ({ dashboard, map, layers }) => {
         options={filteredlayers}
         className="b"
         placeholder="Search layer"
-        defaultValue={filteredlayers.filter((l) => l.id === "popatrisk")[0]}
-        onChange={(opt) => handleLayer(opt, map)}
+        defaultValue={layers}
+        onChange={(opt) => handleLayer(opt)}
       />
     </div>
   );

@@ -2,7 +2,7 @@ import React, { useContext, useRef } from "react";
 import Select from "react-select";
 import { Button, Loading } from "@wfp/ui";
 import { StateContext } from "../App.js";
-import { getResponse, addLayer } from "./utils.js";
+import { getResponse } from "./utils.js";
 import { processHazard } from "./hazards.js";
 import { Icon } from "@wfp/ui";
 import { iconSearch } from "@wfp/icons";
@@ -10,7 +10,7 @@ import { notificationStyle } from "@wfp/ui";
 import { ToastContainer, toast } from "react-toastify";
 
 const SearchMenu = ({ trigger }) => {
-  const { search, searchState, setState, map } = useContext(StateContext);
+  const { search, searchState, setState } = useContext(StateContext);
 
   const getData = () => {
     setState((p) => {
@@ -44,7 +44,6 @@ const SearchMenu = ({ trigger }) => {
           country: searchState.country.label,
           type: hazardVal,
         };
-        const defaultLayer = "popatrisk";
         setState((p) => {
           return {
             ...p,
@@ -52,12 +51,10 @@ const SearchMenu = ({ trigger }) => {
             chartData: chartData,
             legendData: res.legendData,
             month: 0,
-            layers: [defaultLayer],
           };
         });
 
         trigger.current.classList.toggle("is_open");
-        addLayer(defaultLayer, res.geom, map);
       })
       .catch((e) => {
         console.log(e);
