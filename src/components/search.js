@@ -17,7 +17,6 @@ const SearchMenu = ({ trigger }) => {
   const [search, setSearch] = useState({
     countries: initSearch,
     hazards: initSearch,
-    status: "IDLE",
   });
 
   useEffect(() => {
@@ -28,7 +27,7 @@ const SearchMenu = ({ trigger }) => {
   const { countries, hazards, status } = search;
 
   const getData = () => {
-    setSearch((p) => {
+    setState((p) => {
       return { ...p, status: "FETCHING" };
     });
     const country = search.countries.selected.value;
@@ -39,6 +38,7 @@ const SearchMenu = ({ trigger }) => {
         setState((p) => {
           return {
             ...p,
+            hazard: search.hazards.selected,
             geojson: res.geojson,
             summary: res.summary,
             dashboard: res.dashboard,
@@ -70,14 +70,14 @@ const SearchMenu = ({ trigger }) => {
         });
 
         trigger.current.classList.toggle("is_open");
-        setSearch((p) => {
+        setState((p) => {
           return { ...p, status: "SUCCESS" };
         });
       })
       .catch((e) => {
         console.log(e);
         toast.error("Hazard not found for country");
-        setSearch((p) => {
+        setState((p) => {
           return { ...p, status: "ERROR" };
         });
       });
@@ -134,7 +134,7 @@ const SearchMenu = ({ trigger }) => {
         >
           Go!
         </Button>
-        {status === "FETCHING" ? <Loading /> : null}
+        {searchState.status === "FETCHING" ? <Loading /> : null}
       </div>
     </div>
   );
