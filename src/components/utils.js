@@ -11,7 +11,7 @@ export const fetchCountries = async (setSearch) => {
   });
 
   setSearch((s) => {
-    return { ...s, countries: selectCountries };
+    return { ...s, countries: { list: selectCountries, selected: null } };
   });
 };
 
@@ -24,7 +24,7 @@ export const fetchHazards = async (setSearch) => {
   });
 
   setSearch((s) => {
-    return { ...s, hazards: selectHazards };
+    return { ...s, hazards: { list: selectHazards, selected: null } };
   });
 };
 
@@ -84,22 +84,19 @@ export const addLayer = (layerName, data, map) => {
 };
 
 export const getResponse = async (country, hazard) => {
-  // Get country geojson.
-  const { value } = country;
-
   const resp = await fetch(
-    `${API_URL}data/country/${value}/dataset/context/${value}_NHR_ContextLayers.json`
+    `${API_URL}data/country/${country}/dataset/context/${country}_NHR_ContextLayers.json`
   );
   const geojson = await resp.json();
 
   // Get data per admin2 code, per month, per category.
   const resp_summary = await fetch(
-    `${API_URL}data/country/${value}/hazard/${hazard}/dataset/summary/${value}_NHR_PopAtRisk_${hazard}_Summary.json`
+    `${API_URL}data/country/${country}/hazard/${hazard}/dataset/summary/${country}_NHR_PopAtRisk_${hazard}_Summary.json`
   );
   const summary = await resp_summary.json();
 
   const resp_dashboard = await fetch(
-    `${API_URL}dashboard/country/${value}/hazard/${hazard}.json`
+    `${API_URL}dashboard/country/${country}/hazard/${hazard}.json`
   );
   const dashboard = await resp_dashboard.json();
 

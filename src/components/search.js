@@ -1,8 +1,8 @@
-import React, { useContext, useRef } from "react";
+import React, { useContext, useRef, useState, useEffect } from "react";
 import Select from "react-select";
 import { Button, Loading } from "@wfp/ui";
 import { StateContext } from "../App.js";
-import { getResponse } from "./utils.js";
+import { fetchCountries, fetchHazards, getResponse } from "./utils.js";
 import { processHazard } from "./hazards.js";
 import { Icon } from "@wfp/ui";
 import { iconSearch } from "@wfp/icons";
@@ -10,15 +10,31 @@ import { notificationStyle } from "@wfp/ui";
 import { ToastContainer, toast } from "react-toastify";
 
 const SearchMenu = ({ trigger }) => {
-  const { search, searchState, setState } = useContext(StateContext);
+  const { searchState, setState } = useContext(StateContext);
+
+  // For search component
+  const initSearch = { list: null, selected: null };
+  const [search, setSearch] = useState({
+    countries: initSearch,
+    hazards: initSearch,
+    status: "IDLE",
+  });
+
+  useEffect(() => {
+    fetchCountries(setSearch);
+    fetchHazards(setSearch);
+  }, []);
+
+  const { countries, hazards, status } = search;
 
   const getData = () => {
-    setState((p) => {
-      return { ...p, status: "FETCH" };
+    setSearch((p) => {
+      return { ...p, status: "FETCHING" };
     });
-    const hazardVal = searchState.hazard.value;
+    const country = search.countries.selected.value;
+    const hazard = search.hazards.selected.value;
 
-    getResponse(searchState.country, hazardVal)
+    getResponse(country, hazard)
       .then((res) => {
         setState((p) => {
           return {
@@ -30,7 +46,7 @@ const SearchMenu = ({ trigger }) => {
         });
 
         return processHazard(
-          hazardVal,
+          hazard,
           res.geojson,
           res.summary,
           searchState.month,
@@ -41,13 +57,12 @@ const SearchMenu = ({ trigger }) => {
         let chartData = res.chartData;
         chartData = {
           ...chartData,
-          country: searchState.country.label,
-          type: hazardVal,
+          country: search.countries.selected.label,
+          type: hazard,
         };
         setState((p) => {
           return {
             ...p,
-            status: "SUCCESS",
             chartData: chartData,
             legendData: res.legendData,
             month: 0,
@@ -55,11 +70,14 @@ const SearchMenu = ({ trigger }) => {
         });
 
         trigger.current.classList.toggle("is_open");
+        setSearch((p) => {
+          return { ...p, status: "SUCCESS" };
+        });
       })
       .catch((e) => {
         console.log(e);
         toast.error("Hazard not found for country");
-        setState((p) => {
+        setSearch((p) => {
           return { ...p, status: "ERROR" };
         });
       });
@@ -79,12 +97,15 @@ const SearchMenu = ({ trigger }) => {
         <Select
           isClearable={true}
           placeholder="Search country"
-          options={search.countries}
-          value={searchState.country}
+          options={countries.list}
+          value={countries.selected}
           styles={customStyles}
           onChange={(value) =>
-            setState((p) => {
-              return { ...p, country: value };
+            setSearch((p) => {
+              return {
+                ...p,
+                countries: { list: countries.list, selected: value },
+              };
             })
           }
           className="mv2 gray"
@@ -93,24 +114,27 @@ const SearchMenu = ({ trigger }) => {
         <Select
           isClearable={true}
           placeholder="Search hazard"
-          options={search.hazards}
-          value={searchState.hazard}
+          options={hazards.list}
+          value={hazards.selected}
           styles={customStyles}
           onChange={(value) =>
-            setState((p) => {
-              return { ...p, hazard: value };
+            setSearch((p) => {
+              return { ...p, hazards: { list: hazards.list, selected: value } };
             })
           }
           className="mv2 gray"
         />
         <Button
-          disabled={searchState.country === null}
+          disabled={
+            search.countries.selected === null ||
+            search.hazards.selected === null
+          }
           onClick={getData}
           kind="danger--primary"
         >
           Go!
         </Button>
-        {searchState.status === "FETCH" ? <Loading /> : null}
+        {status === "FETCHING" ? <Loading /> : null}
       </div>
     </div>
   );

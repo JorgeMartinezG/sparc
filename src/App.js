@@ -5,7 +5,6 @@ import mapboxgl from "mapbox-gl";
 import "./assets/style.scss";
 import "@wfp/ui/assets/css/styles.min.css";
 
-import { fetchCountries, fetchHazards } from "./components/utils.js";
 import { Icons } from "./components/icons.js";
 import { Sidebar } from "./components/sidebar.js";
 import { MonthBar } from "./components/monthBar.js";
@@ -47,8 +46,6 @@ const Viewer = () => {
   const [map, setMap] = useState(null);
 
   const [searchState, setState] = useState({
-    country: null,
-    hazard: null,
     status: "IDLE",
     legendData: null,
     geom: null,
@@ -56,12 +53,6 @@ const Viewer = () => {
     chartData: { type: null, data: null, countryName: null },
     dashboard: null,
   });
-  const [search, setSearch] = useState({ countries: null, hazards: null });
-
-  useEffect(() => {
-    fetchCountries(setSearch);
-    fetchHazards(setSearch);
-  }, []);
 
   useEffect(() => {
     const map = new mapboxgl.Map({
@@ -78,7 +69,6 @@ const Viewer = () => {
   return (
     <StateContext.Provider
       value={{
-        search: search,
         searchState: searchState,
         setState: setState,
         map: map,
