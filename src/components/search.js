@@ -3,7 +3,7 @@ import Select from "react-select";
 import { Button, Loading } from "@wfp/ui";
 import { StateContext } from "../App.js";
 import { fetchCountries, fetchHazards, getResponse } from "./utils.js";
-import { processHazard, getChartData } from "./hazards.js";
+import { getChartData } from "./hazards.js";
 import { Icon } from "@wfp/ui";
 import { iconSearch } from "@wfp/icons";
 import { notificationStyle } from "@wfp/ui";
@@ -24,7 +24,7 @@ const SearchMenu = ({ trigger }) => {
     fetchHazards(setSearch);
   }, []);
 
-  const { countries, hazards, status } = search;
+  const { countries, hazards } = search;
 
   const getData = () => {
     setState((p) => {
