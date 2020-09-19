@@ -1,12 +1,14 @@
 import React from "react";
 import { CHART_LABELS, HAZARD_PARAMS } from "../config.js";
 
-const getChartData = (summary_json, field, colorsMap) => {
+export const getChartData = (summary, hazard) => {
+  const { colorsMap, field } = HAZARD_PARAMS[hazard];
+
   // Create a new array of data for chart.
   const items = Object.keys(colorsMap);
   const datasets = items.map((i) => {
     return {
-      data: summary_json[field][i].by_month,
+      data: summary[field][i].by_month,
       type: "bar",
       stack: field,
       label: i,

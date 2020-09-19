@@ -3,7 +3,7 @@ import Select from "react-select";
 import { Button, Loading } from "@wfp/ui";
 import { StateContext } from "../App.js";
 import { fetchCountries, fetchHazards, getResponse } from "./utils.js";
-import { processHazard } from "./hazards.js";
+import { processHazard, getChartData } from "./hazards.js";
 import { Icon } from "@wfp/ui";
 import { iconSearch } from "@wfp/icons";
 import { notificationStyle } from "@wfp/ui";
@@ -35,6 +35,13 @@ const SearchMenu = ({ trigger }) => {
 
     getResponse(country, hazard)
       .then((res) => {
+        let chartData = getChartData(res.summary, hazard);
+        chartData = {
+          ...chartData,
+          country: search.countries.selected.label,
+          type: hazard,
+        };
+
         setState((p) => {
           return {
             ...p,
@@ -42,37 +49,13 @@ const SearchMenu = ({ trigger }) => {
             geojson: res.geojson,
             summary: res.summary,
             dashboard: res.dashboard,
-          };
-        });
-
-        return processHazard(
-          hazard,
-          res.geojson,
-          res.summary,
-          searchState.month,
-          res.dashboard
-        );
-      })
-      .then((res) => {
-        let chartData = res.chartData;
-        chartData = {
-          ...chartData,
-          country: search.countries.selected.label,
-          type: hazard,
-        };
-        setState((p) => {
-          return {
-            ...p,
-            chartData: chartData,
-            legendData: res.legendData,
             month: 0,
+            chartData: chartData,
+            status: "SUCCESS",
           };
         });
 
         trigger.current.classList.toggle("is_open");
-        setState((p) => {
-          return { ...p, status: "SUCCESS" };
-        });
       })
       .catch((e) => {
         console.log(e);
