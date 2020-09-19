@@ -81,7 +81,7 @@ const SidebarTabs = ({ searchState, map }) => {
 };
 
 const Options = () => {
-  const { searchState, map } = useContext(StateContext);
+  const { searchState, map, setState, setLegend } = useContext(StateContext);
   const { dashboard } = searchState;
 
   const hazardLayers = dashboard.sidebar.ui.layers;
@@ -94,7 +94,8 @@ const Options = () => {
   const [layers, setLayers] = useState(defaultArray);
 
   useEffect(() => {
-    handleLayers(layers, searchState, map);
+    const legends = handleLayers(layers, searchState, map);
+    setLegend(legends);
   }, [layers, searchState, map]);
 
   const handleLayer = (opt) => {

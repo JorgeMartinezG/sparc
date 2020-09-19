@@ -38,7 +38,7 @@ const SearchMenu = ({ trigger }) => {
         let chartData = getChartData(res.summary, hazard);
         chartData = {
           ...chartData,
-          country: search.countries.selected.label,
+          country: country,
           type: hazard,
         };
 

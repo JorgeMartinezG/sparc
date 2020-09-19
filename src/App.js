@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 
 import mapboxgl from "mapbox-gl";
 
@@ -15,9 +15,13 @@ export const StateContext = React.createContext();
 
 mapboxgl.accessToken = MAPBOX_TOKEN;
 
-const Legend = ({ legendData }) => {
-  if (legendData === null) return null;
+const Legend = () => {
+  const { legend } = useContext(StateContext);
+  if (legend.length === 0) {
+    return null;
+  }
 
+  const legendData = legend[0];
   return (
     <div className="absolute bottom-2 right-2 z-1 bg-light-gray shadow-2 pa2 bt b--interactive-01 bw2">
       <h3 className="f5 b">Population at risk by admin2</h3>
@@ -44,10 +48,10 @@ const Viewer = () => {
   const mapRef = React.useRef();
   const sidebarRef = React.useRef();
   const [map, setMap] = useState(null);
+  const [legend, setLegend] = useState([]);
 
   const [searchState, setState] = useState({
     status: "IDLE",
-    legendData: null,
     geom: null,
     month: null,
     chartData: { type: null, data: null, countryName: null },
@@ -72,6 +76,8 @@ const Viewer = () => {
         searchState: searchState,
         setState: setState,
         map: map,
+        legend: legend,
+        setLegend: setLegend,
       }}
     >
       <div ref={mapRef} className="vh-100 relative z-1">

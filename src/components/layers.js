@@ -6,24 +6,41 @@ export const handleLayers = (layers, searchState, map) => {
     return;
   }
 
-  layers.forEach((l) => handleLayer(l, searchState, map));
+  return layers
+    .map((l) => handleLayer(l, searchState, map))
+    .filter((l) => l !== null);
+};
+
+const createLegend = (breakpoints, bpColors) => {
+  // Generate data for legend.
+
+  return breakpoints.map((b, i) => {
+    let val = b.toString();
+    if (i > 0) {
+      val = `${breakpoints[i - 1].toString()} - ${b.toString()}`;
+    }
+
+    return { range: val, color: bpColors[i] };
+  });
 };
 
 const handleLayer = (layer, searchState, map) => {
-  let featureCollection = null;
+  let layerData = null;
   switch (layer.id) {
     case "popatrisk":
-      featureCollection = AddLayerPopAtRisk(layer, searchState);
+      layerData = AddLayerPopAtRisk(layer, searchState);
       break;
     default:
       console.log("Layer Id not found");
   }
 
-  if (featureCollection === null) {
+  if (layerData === null) {
     return null;
   }
 
-  addLayer(layer.id, featureCollection, map);
+  addLayer(layer.id, layerData.geom, map);
+
+  return layerData.legend;
 };
 
 const AddLayerPopAtRisk = (layer, searchState) => {
@@ -86,8 +103,12 @@ const AddLayerPopAtRisk = (layer, searchState) => {
 
   const filtered = processedFeatures.filter((f) => f !== null);
 
-  return {
+  const geom = {
     type: "FeatureCollection",
     features: filtered,
   };
+
+  const legend = createLegend(breakpoints, bpColors);
+
+  return { geom: geom, legend: legend };
 };
