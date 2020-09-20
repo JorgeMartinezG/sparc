@@ -89,7 +89,9 @@ const Options = () => {
     hazardLayers.includes(l.id)
   );
 
-  const defaultArray = filteredlayers.filter((l) => l.id === "popatrisk");
+  const defaultArray = filteredlayers.filter(
+    (l) => l.id === "context_mean_change"
+  );
 
   const [layers, setLayers] = useState(defaultArray);
 

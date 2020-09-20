@@ -1,5 +1,6 @@
 import { HAZARD_PARAMS } from "../config.js";
 import { addLayer } from "./utils.js";
+import { API_URL } from "../config.js";
 
 export const handleLayers = (layers, searchState, map) => {
   if (layers === null) {
@@ -30,6 +31,8 @@ const handleLayer = (layer, searchState, map) => {
     case "popatrisk":
       layerData = AddLayerPopAtRisk(layer, searchState);
       break;
+    case "context_mean_change":
+      layerData = addLayerContext(layer, searchState, "delta_mean");
     default:
       console.log("Layer Id not found");
   }
@@ -41,6 +44,75 @@ const handleLayer = (layer, searchState, map) => {
   addLayer(layer.id, layerData.geom, map);
 
   return layerData.legend;
+};
+
+const rgbToHex = (str) => {
+  return (
+    "#" +
+    str
+      .split("(")[1]
+      .split(")")[0]
+      .split(",")
+      .map((l) => parseInt(l))
+      .map((x) => {
+        const hex = x.toString(16);
+        return hex.length === 1 ? "0" + hex : hex;
+      })
+      .join("")
+  );
+};
+
+const getMapStyles = (layer, summary, filterValue) => {
+  const symbolizer = layer.carto.styles
+    .filter((s) => s.id === filterValue)[0]
+    .symbolizers.filter((s) => s.id === "default")[0].dynamic.options;
+
+  const breakpointStr = symbolizer.breakpoints.split("_").slice(1).join("_");
+
+  const breakpoints = [...new Set(summary.all.breakpoints[breakpointStr])];
+
+  let attribute = symbolizer.attribute;
+  let classes = symbolizer.classes;
+
+  if (filterValue === "default") {
+    classes = symbolizer.colors.ramp;
+    attribute = null;
+  }
+
+  return { breakpoints, classes, attribute };
+};
+
+const addLayerContext = (layer, searchState, filterValue) => {
+  const { country, geojson, context_summary } = searchState;
+  const { breakpoints, classes, attribute } = getMapStyles(
+    layer,
+    context_summary,
+    filterValue
+  );
+
+  const bpColors = classes.map((c) => c.color).map((c) => rgbToHex(c));
+  console.log(breakpoints);
+  const processedFeatures = geojson.features.map((f) => {
+    const val = f.properties[attribute];
+    const idx = Math.max(0, breakpoints.findIndex((e) => e >= val) - 1);
+
+    const properties = {
+      ...f.properties,
+      color: bpColors[idx],
+      value: val,
+    };
+
+    return { ...f, properties: properties };
+  });
+
+  const geom = {
+    type: "FeatureCollection",
+    features: processedFeatures,
+  };
+
+  const legend = createLegend(breakpoints, bpColors);
+
+  return { geom: geom, legend: legend };
 };
 
 const AddLayerPopAtRisk = (layer, searchState) => {

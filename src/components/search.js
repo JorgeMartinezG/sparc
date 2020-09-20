@@ -46,9 +46,11 @@ const SearchMenu = ({ trigger }) => {
           return {
             ...p,
             hazard: search.hazards.selected,
+            country: country,
             geojson: res.geojson,
             summary: res.summary,
             dashboard: res.dashboard,
+            context_summary: res.context_summary,
             month: 0,
             chartData: chartData,
             status: "SUCCESS",

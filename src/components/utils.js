@@ -100,5 +100,16 @@ export const getResponse = async (country, hazard) => {
   );
   const dashboard = await resp_dashboard.json();
 
-  return { summary: summary, geojson: geojson, dashboard: dashboard };
+  const context_summary_json = await fetch(
+    `${API_URL}data/country/${country}/dataset/context_summary/${country}_NHR_ContextLayers_Summary.json`
+  );
+
+  const context_summary = await context_summary_json.json();
+
+  return {
+    summary: summary,
+    geojson: geojson,
+    dashboard: dashboard,
+    context_summary: context_summary,
+  };
 };
