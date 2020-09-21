@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState, useEffect } from "react";
+import React, { useContext, useMemo, useEffect } from "react";
 import { Header } from "../components/header.js";
 import { handleLayer } from "../components/layers.js";
 import { LandslideHazard, FloodHazard, CycloneHazard } from "./hazards.js";
@@ -83,7 +83,7 @@ const SidebarTabs = ({ searchState, map }) => {
 const Options = () => {
   const DEFAULT_LAYER = "popatrisk";
   const { searchState, map, setLegend, setState } = useContext(StateContext);
-  const { dashboard } = searchState;
+  const { dashboard, layer } = searchState;
 
   const hazardLayers = dashboard.sidebar.ui.layers;
   const filteredlayers = dashboard.featurelayers.filter(
@@ -92,22 +92,34 @@ const Options = () => {
 
   const defaultArray = filteredlayers.filter((l) => l.id === DEFAULT_LAYER)[0];
 
-  const [layers, setLayers] = useState(defaultArray);
-
   useEffect(() => {
+    setState((s) => {
+      return { ...s, layer: defaultArray };
+    });
+  }, [defaultArray, setState]);
+
+  const handleSelect = (opt) => {
     let month = null;
-    if (layers.id === DEFAULT_LAYER) {
+    if (opt.id === DEFAULT_LAYER) {
       month = 0;
     }
+
+    if (map.getLayer(layer.id)) map.removeLayer(layer.id);
+    if (map.getSource(layer.id)) map.removeSource(layer.id);
+
     setState((s) => {
-      return { ...s, month: month };
+      return { ...s, layer: opt, month: month };
     });
-  }, [layers, setState]);
+  };
 
   useEffect(() => {
-    const legend = handleLayer(layers, searchState, map, layers.id);
+    if (searchState.layer === null) {
+      return;
+    }
+
+    const legend = handleLayer(searchState, map);
     setLegend(legend);
-  }, [layers, searchState, map, setLegend]);
+  }, [searchState, map, setLegend]);
 
   return (
     <div className="w-90 center h-100">
@@ -121,8 +133,8 @@ const Options = () => {
         options={filteredlayers}
         className="b"
         placeholder="Search layer"
-        defaultValue={layers}
-        onChange={(opt) => setLayers(opt)}
+        value={layer}
+        onChange={(opt) => handleSelect(opt)}
       />
     </div>
   );

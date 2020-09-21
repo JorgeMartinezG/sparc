@@ -55,6 +55,7 @@ const Viewer = () => {
     month: null,
     chartData: { type: null, data: null, countryName: null },
     dashboard: null,
+    layer: null,
   });
 
   useEffect(() => {

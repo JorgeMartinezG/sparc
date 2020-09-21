@@ -14,31 +14,29 @@ const createLegend = (breakpoints, bpColors) => {
   });
 };
 
-const addLayerGeojson = (layer, searchState) => {
-  switch (layer.id) {
+const addLayerGeojson = (searchState) => {
+  switch (searchState.layer.id) {
     case "popatrisk":
-      return addLayerPopAtRisk(layer, searchState);
+      return addLayerPopAtRisk(searchState);
     default:
-      return addLayerContext(layer, searchState);
+      return addLayerContext(searchState);
   }
 };
 
-export const handleLayer = (layer, searchState, map, oldLayerId) => {
+export const handleLayer = (searchState, map) => {
+  const { layer } = searchState;
   if (layer === null) {
     return null;
   }
 
   let layerData = null;
   if (layer.type === "geojson") {
-    layerData = addLayerGeojson(layer, searchState);
+    layerData = addLayerGeojson(searchState);
   }
 
   if (layerData === null) {
     return null;
   }
-
-  if (map.getLayer(oldLayerId)) map.removeLayer(oldLayerId);
-  if (map.getSource(oldLayerId)) map.removeSource(oldLayerId);
 
   addLayer(layer.id, layerData.geom, map);
 
@@ -76,8 +74,8 @@ const getMapStyles = (layer, summary) => {
   return { breakpoints, classes, attribute };
 };
 
-const addLayerContext = (layer, searchState) => {
-  const { geojson, context_summary } = searchState;
+const addLayerContext = (searchState) => {
+  const { geojson, context_summary, layer } = searchState;
   const { breakpoints, classes, attribute } = getMapStyles(
     layer,
     context_summary
@@ -108,8 +106,8 @@ const addLayerContext = (layer, searchState) => {
   return { geom: geom, legend: legend };
 };
 
-const addLayerPopAtRisk = (layer, searchState) => {
-  const { summary, geojson, hazard, month } = searchState;
+const addLayerPopAtRisk = (searchState) => {
+  const { summary, geojson, hazard, month, layer } = searchState;
   const { field } = HAZARD_PARAMS[hazard.value];
 
   const style = layer.carto.styles.filter((s) => s.id === "default")[0];
