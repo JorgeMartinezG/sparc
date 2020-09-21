@@ -85,8 +85,8 @@ const Options = () => {
   const { dashboard } = searchState;
 
   const hazardLayers = dashboard.sidebar.ui.layers;
-  const filteredlayers = dashboard.featurelayers.filter((l) =>
-    hazardLayers.includes(l.id)
+  const filteredlayers = dashboard.featurelayers.filter(
+    (l) => hazardLayers.includes(l.id) && l.type === "geojson"
   );
 
   const defaultArray = filteredlayers.filter((l) => l.id === "popatrisk")[0];
