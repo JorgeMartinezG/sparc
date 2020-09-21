@@ -81,7 +81,7 @@ const SidebarTabs = ({ searchState, map }) => {
 };
 
 const Options = () => {
-  const { searchState, map, setState, setLegend } = useContext(StateContext);
+  const { searchState, map, setLegend } = useContext(StateContext);
   const { dashboard } = searchState;
 
   const hazardLayers = dashboard.sidebar.ui.layers;
@@ -89,16 +89,14 @@ const Options = () => {
     hazardLayers.includes(l.id)
   );
 
-  const defaultArray = filteredlayers.filter(
-    (l) => l.id === "context_mean_change"
-  );
+  const defaultArray = filteredlayers.filter((l) => l.id === "popatrisk");
 
   const [layers, setLayers] = useState(defaultArray);
 
   useEffect(() => {
     const legends = handleLayers(layers, searchState, map);
     setLegend(legends);
-  }, [layers, searchState, map]);
+  }, [layers, searchState, map, setLegend]);
 
   const handleLayer = (opt) => {
     // Get layers that are new.

@@ -1,6 +1,5 @@
 import { HAZARD_PARAMS } from "../config.js";
 import { addLayer } from "./utils.js";
-import { API_URL } from "../config.js";
 
 export const handleLayers = (layers, searchState, map) => {
   if (layers === null) {
@@ -25,16 +24,21 @@ const createLegend = (breakpoints, bpColors) => {
   });
 };
 
-const handleLayer = (layer, searchState, map) => {
-  let layerData = null;
+const addLayerGeojson = (layer, searchState) => {
   switch (layer.id) {
     case "popatrisk":
-      layerData = AddLayerPopAtRisk(layer, searchState);
-      break;
+      return AddLayerPopAtRisk(layer, searchState);
     case "context_mean_change":
-      layerData = addLayerContext(layer, searchState, "delta_mean");
+      return addLayerContext(layer, searchState, "delta_mean");
     default:
       console.log("Layer Id not found");
+  }
+};
+
+const handleLayer = (layer, searchState, map) => {
+  let layerData = null;
+  if (layer.type === "geojson") {
+    layerData = addLayerGeojson(layer, searchState);
   }
 
   if (layerData === null) {
@@ -83,7 +87,7 @@ const getMapStyles = (layer, summary, filterValue) => {
 };
 
 const addLayerContext = (layer, searchState, filterValue) => {
-  const { country, geojson, context_summary } = searchState;
+  const { geojson, context_summary } = searchState;
   const { breakpoints, classes, attribute } = getMapStyles(
     layer,
     context_summary,
