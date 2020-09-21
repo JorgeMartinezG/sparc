@@ -11,22 +11,10 @@ export const MonthBar = ({ map }) => {
   }
 
   const handleMonth = (idx) => {
-    const data = processHazard(
-      searchState.hazard.value,
-      searchState.geojson,
-      searchState.summary,
-      idx,
-      searchState.dashboard
-    );
-
-    map.getSource("popatrisk").setData(data.geom);
+    //map.getSource("popatrisk").setData(data.geom);
 
     setState((p) => {
-      return {
-        ...p,
-        month: idx,
-        legendData: data.legendData,
-      };
+      return { ...p, month: idx };
     });
   };
 
