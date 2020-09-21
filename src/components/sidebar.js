@@ -1,6 +1,6 @@
 import React, { useContext, useMemo, useState, useEffect } from "react";
 import { Header } from "../components/header.js";
-import { handleLayers } from "../components/layers.js";
+import { handleLayer } from "../components/layers.js";
 import { LandslideHazard, FloodHazard, CycloneHazard } from "./hazards.js";
 import { StateContext } from "../App.js";
 import { Bar } from "react-chartjs-2";
@@ -89,24 +89,14 @@ const Options = () => {
     hazardLayers.includes(l.id)
   );
 
-  const defaultArray = filteredlayers.filter((l) => l.id === "popatrisk");
+  const defaultArray = filteredlayers.filter((l) => l.id === "popatrisk")[0];
 
   const [layers, setLayers] = useState(defaultArray);
 
   useEffect(() => {
-    const legends = handleLayers(layers, searchState, map);
-    setLegend(legends);
+    const legend = handleLayer(layers, searchState, map, layers.id);
+    setLegend(legend);
   }, [layers, searchState, map, setLegend]);
-
-  const handleLayer = (opt) => {
-    // Get layers that are new.
-
-    // Get layers that were removed.
-    // const ids = opt.map((l) => l.id);
-    // layers.filter((l) => !ids.includes(l)).map((l) => map.removeLayer(l));
-
-    setLayers(opt);
-  };
 
   return (
     <div className="w-90 center h-100">
@@ -114,14 +104,14 @@ const Options = () => {
 
       <Select
         classNamePrefix="react-select"
-        isMulti={true}
+        isClearable={false}
         getOptionLabel={(option) => option.title}
         getOptionValue={(option) => option.id}
         options={filteredlayers}
         className="b"
         placeholder="Search layer"
         defaultValue={layers}
-        onChange={(opt) => handleLayer(opt)}
+        onChange={(opt) => setLayers(opt)}
       />
     </div>
   );

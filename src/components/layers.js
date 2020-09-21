@@ -1,16 +1,6 @@
 import { HAZARD_PARAMS } from "../config.js";
 import { addLayer } from "./utils.js";
 
-export const handleLayers = (layers, searchState, map) => {
-  if (layers === null) {
-    return;
-  }
-
-  return layers
-    .map((l) => handleLayer(l, searchState, map))
-    .filter((l) => l !== null);
-};
-
 const createLegend = (breakpoints, bpColors) => {
   // Generate data for legend.
 
@@ -35,7 +25,11 @@ const addLayerGeojson = (layer, searchState) => {
   }
 };
 
-const handleLayer = (layer, searchState, map) => {
+export const handleLayer = (layer, searchState, map, oldLayerId) => {
+  if (layer === null) {
+    return null;
+  }
+
   let layerData = null;
   if (layer.type === "geojson") {
     layerData = addLayerGeojson(layer, searchState);
@@ -44,6 +38,9 @@ const handleLayer = (layer, searchState, map) => {
   if (layerData === null) {
     return null;
   }
+
+  if (map.getLayer(oldLayerId)) map.removeLayer(oldLayerId);
+  if (map.getSource(oldLayerId)) map.removeSource(oldLayerId);
 
   addLayer(layer.id, layerData.geom, map);
 

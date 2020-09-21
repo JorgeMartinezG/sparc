@@ -17,16 +17,15 @@ mapboxgl.accessToken = MAPBOX_TOKEN;
 
 const Legend = () => {
   const { legend } = useContext(StateContext);
-  if (legend.length === 0) {
+  if (legend === null) {
     return null;
   }
 
-  const legendData = legend[0];
   return (
     <div className="absolute bottom-2 right-2 z-1 bg-light-gray shadow-2 pa2 bt b--interactive-01 bw2">
       <h3 className="f5 b">Population at risk by admin2</h3>
       <div className="cf mt2">
-        {legendData.map((e) => {
+        {legend.map((e) => {
           return (
             <div className="tc fl w3">
               <div
@@ -48,7 +47,7 @@ const Viewer = () => {
   const mapRef = React.useRef();
   const sidebarRef = React.useRef();
   const [map, setMap] = useState(null);
-  const [legend, setLegend] = useState([]);
+  const [legend, setLegend] = useState(null);
 
   const [searchState, setState] = useState({
     status: "IDLE",
