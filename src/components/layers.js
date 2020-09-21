@@ -18,10 +18,8 @@ const addLayerGeojson = (layer, searchState) => {
   switch (layer.id) {
     case "popatrisk":
       return addLayerPopAtRisk(layer, searchState);
-    case "context_mean_change":
-      return addLayerContext(layer, searchState, "delta_mean");
     default:
-      console.log("Layer Id not found");
+      return addLayerContext(layer, searchState);
   }
 };
 
@@ -63,10 +61,10 @@ const rgbToHex = (str) => {
   );
 };
 
-const getMapStyles = (layer, summary, filterValue) => {
-  const symbolizer = layer.carto.styles
-    .filter((s) => s.id === filterValue)[0]
-    .symbolizers.filter((s) => s.id === "default")[0].dynamic.options;
+const getMapStyles = (layer, summary) => {
+  const symbolizer = layer.carto.styles[0].symbolizers.filter(
+    (s) => s.id === "default"
+  )[0].dynamic.options;
 
   const breakpointStr = symbolizer.breakpoints.split("_").slice(1).join("_");
 
@@ -75,20 +73,14 @@ const getMapStyles = (layer, summary, filterValue) => {
   let attribute = symbolizer.attribute;
   let classes = symbolizer.classes;
 
-  if (filterValue === "default") {
-    classes = symbolizer.colors.ramp;
-    attribute = null;
-  }
-
   return { breakpoints, classes, attribute };
 };
 
-const addLayerContext = (layer, searchState, filterValue) => {
+const addLayerContext = (layer, searchState) => {
   const { geojson, context_summary } = searchState;
   const { breakpoints, classes, attribute } = getMapStyles(
     layer,
-    context_summary,
-    filterValue
+    context_summary
   );
 
   const bpColors = classes.map((c) => c.color).map((c) => rgbToHex(c));
