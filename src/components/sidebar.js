@@ -81,7 +81,8 @@ const SidebarTabs = ({ searchState, map }) => {
 };
 
 const Options = () => {
-  const { searchState, map, setLegend } = useContext(StateContext);
+  const DEFAULT_LAYER = "popatrisk";
+  const { searchState, map, setLegend, setState } = useContext(StateContext);
   const { dashboard } = searchState;
 
   const hazardLayers = dashboard.sidebar.ui.layers;
@@ -89,9 +90,19 @@ const Options = () => {
     (l) => hazardLayers.includes(l.id) && l.type === "geojson"
   );
 
-  const defaultArray = filteredlayers.filter((l) => l.id === "popatrisk")[0];
+  const defaultArray = filteredlayers.filter((l) => l.id === DEFAULT_LAYER)[0];
 
   const [layers, setLayers] = useState(defaultArray);
+
+  useEffect(() => {
+    let month = null;
+    if (layers.id === DEFAULT_LAYER) {
+      month = 0;
+    }
+    setState((s) => {
+      return { ...s, month: month };
+    });
+  }, [layers, setState]);
 
   useEffect(() => {
     const legend = handleLayer(layers, searchState, map, layers.id);
