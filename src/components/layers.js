@@ -27,7 +27,7 @@ const createLegend = (breakpoints, bpColors) => {
 const addLayerGeojson = (layer, searchState) => {
   switch (layer.id) {
     case "popatrisk":
-      return AddLayerPopAtRisk(layer, searchState);
+      return addLayerPopAtRisk(layer, searchState);
     case "context_mean_change":
       return addLayerContext(layer, searchState, "delta_mean");
     default:
@@ -119,7 +119,7 @@ const addLayerContext = (layer, searchState, filterValue) => {
   return { geom: geom, legend: legend };
 };
 
-const AddLayerPopAtRisk = (layer, searchState) => {
+const addLayerPopAtRisk = (layer, searchState) => {
   const { summary, geojson, hazard, month } = searchState;
   const { field } = HAZARD_PARAMS[hazard.value];
 
