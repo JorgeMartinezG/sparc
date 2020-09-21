@@ -104,9 +104,6 @@ const Options = () => {
       month = 0;
     }
 
-    if (map.getLayer(layer.id)) map.removeLayer(layer.id);
-    if (map.getSource(layer.id)) map.removeSource(layer.id);
-
     setState((s) => {
       return { ...s, layer: opt, month: month };
     });

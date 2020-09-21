@@ -38,7 +38,11 @@ export const handleLayer = (searchState, map) => {
     return null;
   }
 
-  addLayer(layer.id, layerData.geom, map);
+  if (map.getLayer("country")) {
+    map.getSource("country").setData(layerData.geom);
+  } else {
+    addLayer("country", layerData.geom, map);
+  }
 
   return layerData.legend;
 };
