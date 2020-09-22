@@ -68,9 +68,14 @@ const getMapStyles = (layer, summary) => {
     (s) => s.id === "default"
   )[0].dynamic.options;
 
-  const breakpointStr = symbolizer.breakpoints.split("_").slice(1).join("_");
+  let breakpoints = null;
 
-  const breakpoints = [...new Set(summary.all.breakpoints[breakpointStr])];
+  if (layer.id === "context_ldi") {
+    breakpoints = Array.from({ length: 9 }, (_, i) => i + 1);
+  } else {
+    const breakpointStr = symbolizer.breakpoints.split("_").slice(1).join("_");
+    breakpoints = [...new Set(summary.all.breakpoints[breakpointStr])];
+  }
 
   let attribute = symbolizer.attribute;
   let classes = symbolizer.classes;
