@@ -99,10 +99,7 @@ const addLayerContext = (searchState) => {
 
   const processedFeatures = geojson.features.map((f) => {
     const val = f.properties[attribute];
-    const idx = Math.max(
-      0,
-      breakpoints.findIndex((e) => e >= val)
-    );
+    const idx = Math.max(0, breakpoints.findIndex((e) => e >= val) - 1);
 
     const properties = {
       ...f.properties,
