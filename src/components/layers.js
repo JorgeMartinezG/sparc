@@ -85,11 +85,19 @@ const addLayerContext = (searchState) => {
     context_summary
   );
 
-  const bpColors = classes.map((c) => c.color).map((c) => rgbToHex(c));
-  console.log(breakpoints);
+  const bpColors = classes
+    .map((c) => c.color)
+    .map((c) => {
+      if (c.startsWith("#")) return c;
+      return rgbToHex(c);
+    });
+
   const processedFeatures = geojson.features.map((f) => {
     const val = f.properties[attribute];
-    const idx = Math.max(0, breakpoints.findIndex((e) => e >= val) - 1);
+    const idx = Math.max(
+      0,
+      breakpoints.findIndex((e) => e >= val)
+    );
 
     const properties = {
       ...f.properties,
