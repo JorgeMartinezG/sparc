@@ -25,10 +25,11 @@ const HOT = {
 };
 
 export const BASEMAP_OPTIONS = [
-  { label: "bright", value: "bright-v9" },
-  { label: "humanitarian", value: HOT },
-  { label: "dark", value: "dark-v9" },
-  { label: "light", value: "light-v9" },
+  { label: "Bright", value: "bright-v9" },
+  { label: "Satellite", value: "satellite-v9" },
+  { label: "Humanitarian", value: HOT },
+  { label: "Dark", value: "dark-v9" },
+  { label: "Light", value: "light-v9" },
 ];
 
 const DEFAULT_CHART_LABELS = [
