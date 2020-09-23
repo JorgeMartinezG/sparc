@@ -82,7 +82,9 @@ const SidebarTabs = ({ searchState, map }) => {
 
 const Options = () => {
   const DEFAULT_LAYER = "popatrisk";
-  const { searchState, map, setLegend, setState } = useContext(StateContext);
+  const { searchState, map, setLegend, setState, setGeom } = useContext(
+    StateContext
+  );
   const { dashboard, layer } = searchState;
 
   const hazardLayers = dashboard.sidebar.ui.layers;
@@ -114,9 +116,10 @@ const Options = () => {
       return;
     }
 
-    const legend = handleLayer(searchState, map);
+    const { geom, legend } = handleLayer(searchState, map);
     setLegend(legend);
-  }, [searchState, map, setLegend]);
+    setGeom(geom);
+  }, [searchState, map, setLegend, setGeom]);
 
   return (
     <div className="w-90 center h-100">

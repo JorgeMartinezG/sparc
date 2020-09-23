@@ -9,6 +9,7 @@ import { Icons } from "./components/icons.js";
 import { Sidebar } from "./components/sidebar.js";
 import { MonthBar } from "./components/monthBar.js";
 import { BasemapMenu } from "./components/basemapMenu.js";
+import { addLayer } from "./components/utils.js";
 import { MAPBOX_TOKEN } from "./config.js";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { BASEMAP_OPTIONS } from "./config.js";
@@ -49,11 +50,11 @@ const Viewer = () => {
   const mapRef = React.useRef();
   const sidebarRef = React.useRef();
   const [map, setMap] = useState(null);
+  const [geom, setGeom] = useState(null);
   const [legend, setLegend] = useState(null);
 
   const [searchState, setState] = useState({
     status: "IDLE",
-    geom: null,
     month: null,
     chartData: { type: null, data: null, countryName: null },
     dashboard: null,
@@ -72,6 +73,15 @@ const Viewer = () => {
     setMap(map);
   }, []);
 
+  useEffect(() => {
+    if (map === null) return;
+    map.on("style.load", (event) => {
+      if (geom !== null) {
+        addLayer("country", geom, map);
+      }
+    });
+  }, [map, geom]);
+
   return (
     <StateContext.Provider
       value={{
@@ -80,6 +90,7 @@ const Viewer = () => {
         map: map,
         legend: legend,
         setLegend: setLegend,
+        setGeom: setGeom,
       }}
     >
       <div ref={mapRef} className="vh-100 relative z-1">

@@ -40,7 +40,7 @@ export const handleLayer = (searchState, map) => {
 
   addLayer("country", layerData.geom, map);
 
-  return layerData.legend;
+  return layerData;
 };
 
 const rgbToHex = (str) => {
