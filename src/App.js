@@ -8,8 +8,10 @@ import "@wfp/ui/assets/css/styles.min.css";
 import { Icons } from "./components/icons.js";
 import { Sidebar } from "./components/sidebar.js";
 import { MonthBar } from "./components/monthBar.js";
+import { BasemapMenu } from "./components/basemapMenu.js";
 import { MAPBOX_TOKEN } from "./config.js";
 import "mapbox-gl/dist/mapbox-gl.css";
+import { BASEMAP_OPTIONS } from "./config.js";
 
 export const StateContext = React.createContext();
 
@@ -61,7 +63,7 @@ const Viewer = () => {
   useEffect(() => {
     const map = new mapboxgl.Map({
       container: mapRef.current,
-      style: "mapbox://styles/mapbox/light-v9",
+      style: `mapbox://styles/mapbox/${BASEMAP_OPTIONS[0].value}`,
       center: [0, 0],
       zoom: 2,
       attributionControl: false,
@@ -85,6 +87,7 @@ const Viewer = () => {
         <Sidebar sidebarRef={sidebarRef} />
         <Legend legendData={searchState.legendData} />
         <MonthBar map={map} />
+        <BasemapMenu map={map} />
       </div>
     </StateContext.Provider>
   );
