@@ -93,16 +93,26 @@ const addLayerContext = (searchState) => {
   const { breakpoints, symbolizer } = getMapStyles(layer, context_summary);
   const { classes, attribute } = symbolizer.dynamic.options;
 
-  const bpColors = classes
+  let bpColors = classes
     .map((c) => c.color)
     .map((c) => {
       if (c.startsWith("#")) return c;
       return rgbToHex(c);
     });
 
+  // Add no change for vegetation loss and gain layers.
+  if (
+    ["context_positive_change", "context_negative_change"].includes(layer.id)
+  ) {
+    bpColors.unshift("#AAAAAA");
+  }
+
   const processedFeatures = geojson.features.map((f) => {
     const val = f.properties[attribute];
-    const idx = Math.max(0, breakpoints.findIndex((e) => e >= val) - 1);
+    const idx = Math.max(
+      0,
+      breakpoints.findIndex((e) => e >= val)
+    );
 
     const properties = {
       ...f.properties,
