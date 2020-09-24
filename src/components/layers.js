@@ -1,17 +1,26 @@
 import { HAZARD_PARAMS } from "../config.js";
 import { addLayer } from "./utils.js";
 
-const createLegend = (breakpoints, bpColors) => {
+const createLegend = (breakpoints, bpColors, symbolizer, title) => {
   // Generate data for legend.
+  const intl = new Intl.NumberFormat("en-US", {
+    style: "decimal",
+    notation: "compact",
+  });
 
-  return breakpoints.map((b, i) => {
-    let val = b.toString();
+  const arrayValues = breakpoints.map((b, i) => {
+    let val = intl.format(b);
     if (i > 0) {
-      val = `${breakpoints[i - 1].toString()} - ${b.toString()}`;
+      val = `${intl.format(breakpoints[i - 1])}/${intl.format(b)}`;
     }
 
     return { range: val, color: bpColors[i] };
   });
+
+  const range = symbolizer.metadata.range;
+  const description = symbolizer.description;
+
+  return { arrayValues, range, description, title };
 };
 
 const addLayerGeojson = (searchState) => {
@@ -62,29 +71,27 @@ const rgbToHex = (str) => {
 const getMapStyles = (layer, summary) => {
   const symbolizer = layer.carto.styles[0].symbolizers.filter(
     (s) => s.id === "default"
-  )[0].dynamic.options;
+  )[0];
 
   let breakpoints = null;
 
   if (layer.id === "context_ldi") {
     breakpoints = Array.from({ length: 9 }, (_, i) => i + 1);
   } else {
-    const breakpointStr = symbolizer.breakpoints.split("_").slice(1).join("_");
+    const breakpointStr = symbolizer.dynamic.options.breakpoints
+      .split("_")
+      .slice(1)
+      .join("_");
     breakpoints = [...new Set(summary.all.breakpoints[breakpointStr])];
   }
 
-  let attribute = symbolizer.attribute;
-  let classes = symbolizer.classes;
-
-  return { breakpoints, classes, attribute };
+  return { breakpoints, symbolizer };
 };
 
 const addLayerContext = (searchState) => {
   const { geojson, context_summary, layer } = searchState;
-  const { breakpoints, classes, attribute } = getMapStyles(
-    layer,
-    context_summary
-  );
+  const { breakpoints, symbolizer } = getMapStyles(layer, context_summary);
+  const { classes, attribute } = symbolizer.dynamic.options;
 
   const bpColors = classes
     .map((c) => c.color)
@@ -111,7 +118,7 @@ const addLayerContext = (searchState) => {
     features: processedFeatures,
   };
 
-  const legend = createLegend(breakpoints, bpColors);
+  const legend = createLegend(breakpoints, bpColors, symbolizer, layer.title);
 
   return { geom: geom, legend: legend };
 };
@@ -181,7 +188,7 @@ const addLayerPopAtRisk = (searchState) => {
     features: filtered,
   };
 
-  const legend = createLegend(breakpoints, bpColors);
+  const legend = createLegend(breakpoints, bpColors, symbolizer, layer.title);
 
   return { geom: geom, legend: legend };
 };
