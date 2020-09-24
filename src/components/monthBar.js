@@ -1,7 +1,6 @@
 import React, { useContext } from "react";
 import { StateContext } from "../App.js";
 import { CHART_LABELS } from "../config.js";
-import { processHazard } from "./hazards.js";
 
 export const MonthBar = ({ map }) => {
   const { searchState, setState } = useContext(StateContext);

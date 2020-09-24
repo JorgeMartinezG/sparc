@@ -4,6 +4,7 @@ import { handleLayer } from "../components/layers.js";
 import { LandslideHazard, FloodHazard, CycloneHazard } from "./hazards.js";
 import { StateContext } from "../App.js";
 import { Bar } from "react-chartjs-2";
+import { LayerInfo } from "./layerInfo.js";
 import { Tab, Tabs } from "@wfp/ui";
 import Select from "react-select";
 
@@ -131,11 +132,12 @@ const Options = () => {
         getOptionLabel={(option) => option.title}
         getOptionValue={(option) => option.id}
         options={filteredlayers}
-        className="b"
+        className="b w-80 fl"
         placeholder="Search layer"
         value={layer}
         onChange={(opt) => handleSelect(opt)}
       />
+      <LayerInfo layer={layer} />
     </div>
   );
 };
