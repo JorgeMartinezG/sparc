@@ -32,6 +32,43 @@ const addLayerGeojson = (searchState) => {
   }
 };
 
+const addLayerWMS = (layer, map) => {
+  const params = new URLSearchParams({
+    version: layer.wms.version,
+    format: layer.wms.format,
+    service: "WMS",
+    layers: layer.wms.layers[0],
+    request: "GetMap",
+    transparent: "true",
+    width: "256",
+    height: "256",
+    srs: "EPSG:3857",
+  });
+
+  // "https://img.nj.gov/imagerywms/Natural2015?bbox={bbox-epsg-3857}&format=image/png&service=WMS&version=1.1.1&request=GetMap&srs=EPSG:3857&transparent=true&width=256&height=256&layers=Natural2015",
+
+  map.addSource("wms-test-source", {
+    type: "raster",
+    // use the tiles option to specify a WMS tile source URL
+    // https://docs.mapbox.com/mapbox-gl-js/style-spec/sources/
+    tiles: [
+      `http://sparc.wfp.org/geoserver/wms?bbox={bbox-epsg-3857}&${params}`,
+    ],
+    tileSize: 256,
+  });
+  map.addLayer(
+    {
+      id: "wms-test-layer",
+      type: "raster",
+      source: "wms-test-source",
+      paint: {},
+    },
+    "country"
+  );
+
+  return { geom: null, legend: null };
+};
+
 export const handleLayer = (searchState, map) => {
   const { layer } = searchState;
   if (layer === null) {
@@ -41,13 +78,11 @@ export const handleLayer = (searchState, map) => {
   let layerData = null;
   if (layer.type === "geojson") {
     layerData = addLayerGeojson(searchState);
+    addLayer("country", layerData.geom, map);
   }
-
-  if (layerData === null) {
-    return null;
+  if (layer.type === "WMS") {
+    layerData = addLayerWMS(layer, map);
   }
-
-  addLayer("country", layerData.geom, map);
 
   return layerData;
 };
