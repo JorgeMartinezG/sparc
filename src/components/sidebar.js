@@ -103,7 +103,8 @@ const Options = () => {
   const hazardLayers = dashboard.sidebar.ui.layers;
   const filteredlayers = dashboard.featurelayers
     .filter((l) => hazardLayers.includes(l.id))
-    .filter((l) => tempLayers.includes(l));
+    .filter((l) => tempLayers.includes(l.id));
+
   const defaultArray = filteredlayers.filter((l) => l.id === DEFAULT_LAYER)[0];
 
   useEffect(() => {

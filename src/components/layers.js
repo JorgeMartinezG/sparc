@@ -47,6 +47,10 @@ const addLayerWMS = (layer, map) => {
     srs: "EPSG:3857",
   });
 
+  if (map.getLayer(layer_name)) {
+    map.removeLayer(layer_name);
+    map.removeSource(layer_name);
+  }
   const source = {
     type: "raster",
     // use the tiles option to specify a WMS tile source URL
@@ -55,12 +59,8 @@ const addLayerWMS = (layer, map) => {
     tileSize: 256,
   };
 
-  if (map.getLayer(layer_name)) {
-    map.getSource(layer_name).setData(source);
-  }
-
   map.addLayer({
-    id: "wms-layer",
+    id: layer_name,
     type: "raster",
     source: source,
     paint: {},
