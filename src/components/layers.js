@@ -33,6 +33,8 @@ const addLayerGeojson = (searchState) => {
 };
 
 const addLayerWMS = (layer, map) => {
+  const layer_name = "wms";
+
   const params = new URLSearchParams({
     version: layer.wms.version,
     format: layer.wms.format,
@@ -45,26 +47,24 @@ const addLayerWMS = (layer, map) => {
     srs: "EPSG:3857",
   });
 
-  // "https://img.nj.gov/imagerywms/Natural2015?bbox={bbox-epsg-3857}&format=image/png&service=WMS&version=1.1.1&request=GetMap&srs=EPSG:3857&transparent=true&width=256&height=256&layers=Natural2015",
-
-  map.addSource("wms-test-source", {
+  const source = {
     type: "raster",
     // use the tiles option to specify a WMS tile source URL
     // https://docs.mapbox.com/mapbox-gl-js/style-spec/sources/
-    tiles: [
-      `http://sparc.wfp.org/geoserver/wms?bbox={bbox-epsg-3857}&${params}`,
-    ],
+    tiles: [`${layer.wms.url}?bbox={bbox-epsg-3857}&${params}`],
     tileSize: 256,
+  };
+
+  if (map.getLayer(layer_name)) {
+    map.getSource(layer_name).setData(source);
+  }
+
+  map.addLayer({
+    id: "wms-layer",
+    type: "raster",
+    source: source,
+    paint: {},
   });
-  map.addLayer(
-    {
-      id: "wms-test-layer",
-      type: "raster",
-      source: "wms-test-source",
-      paint: {},
-    },
-    "country"
-  );
 
   return { geom: null, legend: null };
 };

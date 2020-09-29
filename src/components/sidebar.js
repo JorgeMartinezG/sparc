@@ -82,6 +82,18 @@ const SidebarTabs = ({ searchState, map }) => {
 };
 
 const Options = () => {
+  const tempLayers = [
+    "popatrisk",
+    "context_mean_change",
+    "context_positive_change",
+    "context_negative_change",
+    "context_forest_change",
+    "context_crop_change",
+    "context_erosion",
+    "context_ldi",
+    "world_pop",
+  ];
+
   const DEFAULT_LAYER = "popatrisk";
   const { searchState, map, setLegend, setState, setGeom } = useContext(
     StateContext
@@ -89,10 +101,9 @@ const Options = () => {
   const { dashboard, layer } = searchState;
 
   const hazardLayers = dashboard.sidebar.ui.layers;
-  const filteredlayers = dashboard.featurelayers.filter((l) =>
-    hazardLayers.includes(l.id)
-  );
-
+  const filteredlayers = dashboard.featurelayers
+    .filter((l) => hazardLayers.includes(l.id))
+    .filter((l) => tempLayers.includes(l));
   const defaultArray = filteredlayers.filter((l) => l.id === DEFAULT_LAYER)[0];
 
   useEffect(() => {
