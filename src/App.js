@@ -49,8 +49,17 @@ const Viewer = () => {
   useEffect(() => {
     if (map === null) return;
     map.on("style.load", (event) => {
-      if (geom !== null) {
-        addLayer("country", geom, map);
+      if (geom === null) return;
+
+      switch (geom.type) {
+        case "FeatureCollection":
+          addLayer("country", geom, map);
+          break;
+        case "raster":
+          map.addLayer(geom);
+          break;
+        default:
+          break;
       }
     });
   }, [map, geom]);

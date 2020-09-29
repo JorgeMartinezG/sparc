@@ -59,14 +59,16 @@ const addLayerWMS = (layer, map) => {
     tileSize: 256,
   };
 
-  map.addLayer({
+  const mapLayer = {
     id: layer_name,
     type: "raster",
     source: source,
     paint: {},
-  });
+  };
 
-  return { geom: null, legend: null };
+  map.addLayer(mapLayer);
+
+  return { geom: mapLayer, legend: null };
 };
 
 export const handleLayer = (searchState, map) => {
