@@ -1,5 +1,10 @@
 export const API_URL = "http://sparc.wfp.org/api/";
 
+export const LAYERS = {
+  WMS: "WMS",
+  GEOJSON: "GEOJSON",
+};
+
 const HOT = {
   version: 8,
   // "glyphs": "mapbox://fonts/mapbox/{fontstack}/{range}.pbf",

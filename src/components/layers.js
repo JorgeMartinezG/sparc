@@ -1,4 +1,4 @@
-import { HAZARD_PARAMS } from "../config.js";
+import { HAZARD_PARAMS, LAYERS } from "../config.js";
 import { addLayer } from "./utils.js";
 
 const createLegend = (breakpoints, bpColors, symbolizer, title) => {
@@ -33,8 +33,6 @@ const addLayerGeojson = (searchState) => {
 };
 
 const addLayerWMS = (layer, map) => {
-  const layer_name = "wms";
-
   const params = new URLSearchParams({
     version: layer.wms.version,
     format: layer.wms.format,
@@ -47,10 +45,6 @@ const addLayerWMS = (layer, map) => {
     srs: "EPSG:3857",
   });
 
-  if (map.getLayer(layer_name)) {
-    map.removeLayer(layer_name);
-    map.removeSource(layer_name);
-  }
   const source = {
     type: "raster",
     // use the tiles option to specify a WMS tile source URL
@@ -60,13 +54,11 @@ const addLayerWMS = (layer, map) => {
   };
 
   const mapLayer = {
-    id: layer_name,
+    id: LAYERS.WMS,
     type: "raster",
     source: source,
     paint: {},
   };
-
-  map.addLayer(mapLayer);
 
   return { geom: mapLayer, legend: null };
 };
@@ -80,10 +72,19 @@ export const handleLayer = (searchState, map) => {
   let layerData = null;
   if (layer.type === "geojson") {
     layerData = addLayerGeojson(searchState);
-    addLayer("country", layerData.geom, map);
+    addLayer(layerData.geom, map);
   }
   if (layer.type === "WMS") {
-    layerData = addLayerWMS(layer, map);
+    layerData = addLayerWMS(layer);
+
+    Object.values(LAYERS).forEach((v) => {
+      if (map.getLayer(v)) {
+        map.removeLayer(v);
+        map.removeSource(v);
+      }
+    });
+
+    map.addLayer(layerData.geom);
   }
 
   return layerData;

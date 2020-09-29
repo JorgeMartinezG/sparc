@@ -1,4 +1,4 @@
-import { API_URL } from "../config.js";
+import { API_URL, LAYERS } from "../config.js";
 import bbox from "@turf/bbox";
 import mapboxgl from "mapbox-gl";
 
@@ -53,19 +53,24 @@ const PopupDescription = (props) => {
   `;
 };
 
-export const addLayer = (layerName, data, map) => {
+export const addLayer = (data, map) => {
   const options = {
     "fill-color": ["get", "color"],
     "fill-opacity": 0.8,
   };
 
-  if (map.getLayer(layerName)) {
-    map.getSource(layerName).setData(data);
+  if (map.getLayer(LAYERS.WMS)) {
+    map.removeLayer(LAYERS.WMS);
+    map.removeSource(LAYERS.WMS);
+  }
+
+  if (map.getLayer(LAYERS.GEOJSON)) {
+    map.getSource(LAYERS.GEOJSON).setData(data);
   }
 
   map.fitBounds(bbox(data), { padding: 100 });
   map.addLayer({
-    id: layerName,
+    id: LAYERS.GEOJSON,
     type: "fill",
     source: {
       type: "geojson",
@@ -74,7 +79,7 @@ export const addLayer = (layerName, data, map) => {
     paint: options,
   });
 
-  map.on("click", layerName, (e) => {
+  map.on("click", LAYERS.GEOJSON, (e) => {
     const props = e.features[0].properties;
 
     const description = PopupDescription(props);

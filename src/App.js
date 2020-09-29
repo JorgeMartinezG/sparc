@@ -53,7 +53,7 @@ const Viewer = () => {
 
       switch (geom.type) {
         case "FeatureCollection":
-          addLayer("country", geom, map);
+          addLayer(geom, map);
           break;
         case "raster":
           map.addLayer(geom);
