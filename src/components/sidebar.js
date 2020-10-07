@@ -1,4 +1,10 @@
-import React, { useContext, useMemo, useEffect, useState } from "react";
+import React, {
+  useContext,
+  useMemo,
+  useEffect,
+  useState,
+  useLayoutEffect,
+} from "react";
 import { Header } from "../components/header.js";
 import { handleLayer } from "../components/layers.js";
 import { LandslideHazard, FloodHazard, CycloneHazard } from "./hazards.js";
@@ -83,31 +89,37 @@ const SidebarTabs = ({ searchState, map }) => {
 };
 
 const WFPSlider = ({ map, layer }) => {
-  const [val, setVal] = useState(8);
-  if (!layer || !layer.filters) {
-    return null;
-  }
+  const [val, setVal] = useState({ min: 0, max: 0, title: null });
+  useLayoutEffect(() => {
+    console.log(layer);
+    if (!layer || !layer.filters) {
+      return;
+    }
+    const filters = layer.filters.filter((l) => l.output === "popatrisk_range");
 
-  const filters = layer.filters.filter((l) => l.output === "popatrisk_range");
+    if (filters.length === 0) {
+      return;
+    }
+    const filter = filters[0];
+    const { min, max } = filter.ui.slider;
 
-  if (filters.length === 0) {
-    return null;
-  }
-  const filter = filters[0];
-  const { min, max } = filter.ui.slider;
+    setVal({ min: min, max: max, title: filter.title });
+  }, [layer]);
 
-  map.setFilter(LAYERS.GEOJSON, ["<=", ["number", ["get", "value"]], val]);
+  const { min, max, title } = val;
+  if (max === 0) return null;
 
   return (
     <div className="mt2">
       <Slider
         id="slider"
-        value={val}
+        value={max}
         min={min}
         max={max}
-        labelText={filter.title}
-        onChange={(v) => setVal(v)}
-        className="w-100"
+        labelText={title}
+        onChange={(v) =>
+          map.setFilter(LAYERS.GEOJSON, ["<=", ["number", ["get", "value"]], v])
+        }
       />
     </div>
   );
