@@ -175,17 +175,8 @@ const addLayerPopAtRisk = (searchState) => {
   const { summary, geojson, hazard, month, layer } = searchState;
   const { field } = HAZARD_PARAMS[hazard.value];
 
-  const style = layer.carto.styles.filter((s) => s.id === "default")[0];
-  const symbolizer = style.symbolizers.filter((s) => s.id === "default")[0];
-
-  const breakpointStr = symbolizer.dynamic.options.breakpoints
-    .split("_")
-    .slice(1)
-    .join("_");
+  const { breakpoints, symbolizer } = getMapStyles(layer, summary);
   const bpColors = symbolizer.dynamic.options.colors.ramp;
-
-  const breakpoints = [...new Set(summary.all.breakpoints[breakpointStr])];
-
   const processedFeatures = geojson.features.map((f) => {
     const values = summary.admin2[f.properties.admin2_code];
     if (values === undefined) {
