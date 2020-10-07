@@ -1,11 +1,12 @@
-import React, { useContext, useMemo, useEffect } from "react";
+import React, { useContext, useMemo, useEffect, useState } from "react";
 import { Header } from "../components/header.js";
 import { handleLayer } from "../components/layers.js";
 import { LandslideHazard, FloodHazard, CycloneHazard } from "./hazards.js";
 import { StateContext } from "../App.js";
 import { Bar } from "react-chartjs-2";
 import { LayerInfo } from "./layerInfo.js";
-import { Tab, Tabs } from "@wfp/ui";
+import { Tab, Tabs, Slider } from "@wfp/ui";
+import { LAYERS } from "../config.js";
 import Select from "react-select";
 
 const Opts = (country) => {
@@ -81,6 +82,36 @@ const SidebarTabs = ({ searchState, map }) => {
   );
 };
 
+const WFPSlider = ({ map, layer }) => {
+  const [val, setVal] = useState(8);
+  if (!layer || !layer.filters) {
+    return null;
+  }
+
+  const filters = layer.filters.filter((l) => l.output === "popatrisk_range");
+
+  if (filters.length === 0) {
+    return null;
+  }
+  const filter = filters[0];
+  const { min, max } = filter.ui.slider;
+
+  map.setFilter(LAYERS.GEOJSON, ["<=", ["number", ["get", "ldi"]], val]);
+
+  return (
+    <div className="mt2">
+      <Slider
+        id="slider"
+        value={val}
+        min={1}
+        max={10}
+        labelText={filter.title}
+        onChange={(v) => setVal(v)}
+      />
+    </div>
+  );
+};
+
 const Options = () => {
   const tempLayers = [
     "popatrisk",
@@ -150,6 +181,7 @@ const Options = () => {
         onChange={(opt) => handleSelect(opt)}
       />
       <LayerInfo layer={layer} />
+      <WFPSlider layer={layer} map={map} />
     </div>
   );
 };
