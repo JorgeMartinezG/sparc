@@ -96,17 +96,18 @@ const WFPSlider = ({ map, layer }) => {
   const filter = filters[0];
   const { min, max } = filter.ui.slider;
 
-  map.setFilter(LAYERS.GEOJSON, ["<=", ["number", ["get", "ldi"]], val]);
+  map.setFilter(LAYERS.GEOJSON, ["<=", ["number", ["get", "value"]], val]);
 
   return (
     <div className="mt2">
       <Slider
         id="slider"
         value={val}
-        min={1}
-        max={10}
+        min={min}
+        max={max}
         labelText={filter.title}
         onChange={(v) => setVal(v)}
+        className="w-100"
       />
     </div>
   );
