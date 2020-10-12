@@ -110,7 +110,7 @@ const WFPSlider = ({ map, layer }) => {
   if (max === 0) return null;
 
   return (
-    <div className="mt2">
+    <div className="mt2 absolute w-90">
       <Slider
         id="slider"
         value={max}
