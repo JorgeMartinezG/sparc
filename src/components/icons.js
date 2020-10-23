@@ -7,11 +7,12 @@ import { PdfPrint } from "./pdf.js";
 const MemoComponent = () => {
   return useMemo(
     () => (
-      <PDFDownloadLink document={<PdfPrint />} fileName="somename.pdf">
+      <PDFDownloadLink document={<PdfPrint />} fileName="hazard.pdf">
         {({ blob, url, loading, error }) =>
           loading ? null : (
             <Icon
-              className="ml2 h2 shadow-2 w2 pa2 br-100 bg-light-gray ba1"
+              style={{ top: "4.5em" }}
+              className="ml2 h2 shadow-2 w2 pa2 br-100 bg-light-gray ba1 z-4 absolute"
               icon={iconPrintGlyph}
             />
           )
@@ -36,9 +37,7 @@ export const Icons = ({ sidebarRef }) => {
         }
       />
 
-      <div style={{ top: "4.5em" }} className="z-4 absolute ">
-        <MemoComponent />
-      </div>
+      <MemoComponent />
     </div>
   );
 };
