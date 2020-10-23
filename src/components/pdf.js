@@ -21,14 +21,26 @@ const styles = StyleSheet.create({
   },
 });
 
-export const PdfPrint = ({ map }) => {
+export const PdfPrint = ({ map, legend }) => {
   const mapImg = map.getCanvas().toDataURL("image/jpeg");
   return (
     <Document>
-      <Page size="A4" style={styles.page}>
+      <Page size="A4" orientation="landscape" style={styles.page}>
         <View style={styles.section}>
-          <Text>Section #1</Text>
-          <Image src={mapImg} style={{ width: 320, height: 240 }} />
+          <Image
+            src={mapImg}
+            style={{ width: "100%", height: "100%", position: "relative" }}
+          />
+          <Image
+            src={legend}
+            style={{
+              width: "30%",
+              height: "10%",
+              position: "absolute",
+              right: "2%",
+              bottom: "2%",
+            }}
+          />
         </View>
       </Page>
     </Document>

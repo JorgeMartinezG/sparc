@@ -5,7 +5,7 @@ import { Icon } from "@wfp/ui";
 import { PdfPrint } from "./pdf.js";
 import { StateContext } from "../App.js";
 import { saveAs } from "file-saver";
-
+import html2canvas from "html2canvas";
 const PdfRenderer = () => {
   const { map } = useContext(StateContext);
 
@@ -15,7 +15,11 @@ const PdfRenderer = () => {
       className="ml2 h2 shadow-2 w2 pa2 br-100 bg-light-gray ba1 z-4 absolute"
       icon={iconPrintGlyph}
       onClick={async () => {
-        const doc = <PdfPrint map={map} />;
+        const lgd = document.getElementById("legend");
+        const legendCanvas = await html2canvas(lgd);
+        const legend = legendCanvas.toDataURL("image/jpeg");
+
+        const doc = <PdfPrint map={map} legend={legend} />;
         const asPdf = pdf(doc);
         const blob = await asPdf.toBlob();
         saveAs(blob, "document.pdf");
