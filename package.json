@@ -12,6 +12,7 @@
     "@wfp/ui": "^1.4.0",
     "chart.js": "^2.9.3",
     "chartjs": "^0.3.24",
+    "file-saver": "^2.0.2",
     "mapbox-gl": "^1.9.1",
     "node-sass": "^4.14.0",
     "prettier": "^2.0.5",

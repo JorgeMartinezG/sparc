@@ -41,6 +41,7 @@ const Viewer = () => {
       center: [0, 0],
       zoom: 2,
       attributionControl: false,
+      preserveDrawingBuffer: true,
     });
 
     setMap(map);
