@@ -10,10 +10,13 @@ export const Legend = () => {
   const { arrayValues, title, description, range } = legend;
 
   return (
-    <div className="absolute bottom-2 right-2 z-1 bg-white shadow-2 pa2 bt b--interactive-01 bw3 w-30">
+    <div
+      id="legend"
+      className="absolute bottom-2 right-2 z-1 bg-white shadow-2 pa2 bt b--interactive-01 bw3 w-30"
+    >
       <h3 className="f5 b">{title}</h3>
       <p className="f7 ma0 mv1 pa0 mb2">{description}</p>
-      <div id="legend">
+      <div>
         <div className="flex justify-center flex-column pa2">
           <div className="flex justify-between f7">
             <span>{range[0].label}</span>

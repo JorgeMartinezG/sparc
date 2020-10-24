@@ -34,6 +34,12 @@ const Viewer = () => {
     layer: null,
   });
 
+  Object.defineProperty(window, "devicePixelRatio", {
+    get: function () {
+      return 300 / 96;
+    },
+  });
+
   useEffect(() => {
     const map = new mapboxgl.Map({
       container: mapRef.current,

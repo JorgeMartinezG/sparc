@@ -16,7 +16,7 @@ const PdfRenderer = () => {
       icon={iconPrintGlyph}
       onClick={async () => {
         const lgd = document.getElementById("legend");
-        const legendCanvas = await html2canvas(lgd);
+        const legendCanvas = await html2canvas(lgd, { dpi: 300 });
         const legend = legendCanvas.toDataURL("image/jpeg");
 
         const doc = <PdfPrint map={map} legend={legend} />;
