@@ -7,13 +7,13 @@ import React, {
 } from "react";
 import { Header } from "../components/header.js";
 import { handleLayer } from "../components/layers.js";
-import { LandslideHazard, FloodHazard, CycloneHazard } from "./hazards.js";
 import { StateContext } from "../App.js";
 import { Bar } from "react-chartjs-2";
 import { LayerInfo } from "./layerInfo.js";
 import { Tab, Tabs, Slider } from "@wfp/ui";
 import { LAYERS } from "../config.js";
 import Select from "react-select";
+import showdown from "showdown";
 
 const Opts = (country) => {
   return {
@@ -35,40 +35,19 @@ const Opts = (country) => {
   };
 };
 
-const Chart = ({ chartData }) => {
+const Chart = ({ chartData, description }) => {
   const MemoChart = () => {
-    const { type, data, country } = chartData;
+    const { data, country } = chartData;
     const opts = Opts(country);
-
-    let chartInfo = null;
-    switch (type) {
-      default:
-        chartInfo = <div></div>;
-        break;
-      case "landslide":
-        chartInfo = <LandslideHazard />;
-        break;
-      case "flood":
-        chartInfo = <FloodHazard />;
-        break;
-      case "cyclone":
-        chartInfo = <CycloneHazard />;
-        break;
-      case "drought":
-        chartInfo = <CycloneHazard />;
-        break;
-    }
 
     if (country === undefined) {
       return null;
     }
 
     return (
-      <div className="w-90 center pt3">
-        <div className="h-30" id="chart">
-          <Bar data={data} options={opts} height={250} />
-        </div>
-        <div>{chartInfo}</div>
+      <div className="w-90 center pv3">
+        <Bar id="chart" data={data} options={opts} height={250} />
+        <div id="description" dangerouslySetInnerHTML={description} />
       </div>
     );
   };
@@ -76,12 +55,25 @@ const Chart = ({ chartData }) => {
   return useMemo(MemoChart, [chartData]);
 };
 
+export const TransformDescription = (description) => {
+  const converter = new showdown.Converter();
+
+  return {
+    __html: converter.makeHtml(description),
+  };
+};
+
 const SidebarTabs = ({ searchState, map }) => {
-  const { chartData } = searchState;
+  const { chartData, dashboard } = searchState;
+
+  const description = TransformDescription(
+    dashboard.sidebar.ui.charts[0].description
+  );
+
   return (
     <Tabs className="mb2 navlist center">
       <Tab label="Chart">
-        <Chart chartData={chartData} />
+        <Chart chartData={chartData} description={description} />
       </Tab>
       <Tab label="Options">
         <Options />
