@@ -64,9 +64,11 @@ const Chart = ({ chartData }) => {
     }
 
     return (
-      <div className="w-90 center overflow-y-scroll h-100 pt3">
-        <Bar data={data} options={opts} />
-        {chartInfo}
+      <div className="w-90 center pt3">
+        <div className="h-30" id="chart">
+          <Bar data={data} options={opts} height={250} />
+        </div>
+        <div>{chartInfo}</div>
       </div>
     );
   };

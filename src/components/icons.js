@@ -6,6 +6,7 @@ import { PdfPrint } from "./pdf.js";
 import { StateContext } from "../App.js";
 import { saveAs } from "file-saver";
 import html2canvas from "html2canvas";
+
 const PdfRenderer = () => {
   const { map } = useContext(StateContext);
 
