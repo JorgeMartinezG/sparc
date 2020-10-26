@@ -7,6 +7,14 @@ import { StateContext } from "../App.js";
 import { saveAs } from "file-saver";
 import html2canvas from "html2canvas";
 
+const ElementToBlob = async (id) => {
+  const elm = document.getElementById(id);
+  const canvas = await html2canvas(elm, { dpi: 300 });
+  const blob = canvas.toDataURL("image/jpeg");
+
+  return blob;
+};
+
 const PdfRenderer = () => {
   const { map } = useContext(StateContext);
 
@@ -16,11 +24,13 @@ const PdfRenderer = () => {
       className="ml2 h2 shadow-2 w2 pa2 br-100 bg-light-gray ba1 z-4 absolute"
       icon={iconPrintGlyph}
       onClick={async () => {
-        const lgd = document.getElementById("legend");
-        const legendCanvas = await html2canvas(lgd, { dpi: 300 });
-        const legend = legendCanvas.toDataURL("image/jpeg");
+        const legend = await ElementToBlob("legend");
+        const chart = await ElementToBlob("chart");
+        const text = document.getElementById("description").innerText;
 
-        const doc = <PdfPrint map={map} legend={legend} />;
+        const doc = (
+          <PdfPrint map={map} legend={legend} chart={chart} text={text} />
+        );
         const asPdf = pdf(doc);
         const blob = await asPdf.toBlob();
         saveAs(blob, "document.pdf");

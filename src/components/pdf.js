@@ -1,8 +1,8 @@
 import React from "react";
-import { Document, Page, View, Image } from "@react-pdf/renderer";
+import { Document, Page, View, Image, Text } from "@react-pdf/renderer";
 
 // Create styles
-export const PdfPrint = ({ map, legend }) => {
+export const PdfPrint = ({ map, legend, chart, text }) => {
   const mapImg = map.getCanvas().toDataURL("image/jpeg");
   return (
     <Document>
@@ -23,6 +23,20 @@ export const PdfPrint = ({ map, legend }) => {
             }}
           />
         </View>
+      </Page>
+      <Page
+        size="A4"
+        orientation="portrait"
+        style={{
+          padding: 30,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          paddingHorizontal: 20,
+        }}
+      >
+        <Image src={chart} style={{ width: "50%", height: "50%" }} />
+        <Text style={{ fontSize: 12, textAlign: "justify" }}>{text}</Text>
       </Page>
     </Document>
   );
