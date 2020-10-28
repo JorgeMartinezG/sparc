@@ -53,8 +53,6 @@ export const Icons = ({ sidebarRef }) => {
           })
         }
       />
-
-      {searchState.status === "SUCCESS" ? <PdfRenderer /> : null}
     </div>
   );
 };
