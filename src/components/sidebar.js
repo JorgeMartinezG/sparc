@@ -130,6 +130,12 @@ const Options = () => {
     "context_erosion",
     "context_ldi",
     "world_pop",
+    "forecast_1day",
+    "forecast_3day",
+    "forecast_6day",
+    "nrt_1day",
+    "nrt_3day",
+    "nrt_4day",
   ];
 
   const DEFAULT_LAYER = "popatrisk";
