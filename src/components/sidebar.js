@@ -7,6 +7,7 @@ import React, {
 } from "react";
 import { Header } from "../components/header.js";
 import { handleLayer } from "../components/layers.js";
+import { PdfRenderer } from "../components/pdf.js";
 import { StateContext } from "../App.js";
 import { Bar } from "react-chartjs-2";
 import { LayerInfo } from "./layerInfo.js";
@@ -45,7 +46,7 @@ const Chart = ({ chartData, description }) => {
     }
 
     return (
-      <div className="w-90 center pv3">
+      <div>
         <Bar id="chart" data={data} options={opts} height={250} />
         <div id="description" dangerouslySetInnerHTML={description} />
       </div>
@@ -63,6 +64,15 @@ export const TransformDescription = (description) => {
   };
 };
 
+const Downloads = () => {
+  return (
+    <div>
+      <p className="f5 pb2 b">Downloads</p>
+      <PdfRenderer />
+    </div>
+  );
+};
+
 const SidebarTabs = ({ searchState, map }) => {
   const { chartData, dashboard } = searchState;
 
@@ -72,8 +82,11 @@ const SidebarTabs = ({ searchState, map }) => {
 
   return (
     <Tabs className="mb2 navlist center">
-      <Tab label="Chart">
-        <Chart chartData={chartData} description={description} />
+      <Tab label="Data">
+        <div className="w-90 center pv3">
+          <Downloads />
+          <Chart chartData={chartData} description={description} />
+        </div>
       </Tab>
       <Tab label="Options">
         <Options />
