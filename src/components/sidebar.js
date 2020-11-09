@@ -15,6 +15,7 @@ import { Tab, Tabs, Slider } from "@wfp/ui";
 import { LAYERS } from "../config.js";
 import Select from "react-select";
 import showdown from "showdown";
+import { saveAs } from "file-saver";
 
 const Opts = (country) => {
   return {
@@ -64,17 +65,49 @@ export const TransformDescription = (description) => {
   };
 };
 
-const Downloads = () => {
+const Downloads = ({ geojson }) => {
+  const downloadJson = (event) => {
+    const blob = new Blob([JSON.stringify(geojson)], {
+      type: "text/json;charset=utf-8",
+    });
+    saveAs(blob, "download.json");
+  };
+
+  const downloadCsv = (event) => {
+    const keys = Object.keys(geojson.features[0].properties);
+    let csvArray = geojson.features.map((f) =>
+      keys.map((k) => f.properties[k]).join(",")
+    );
+    csvArray.unshift(keys.join(","));
+
+    const blob = new Blob([csvArray.join("\n")], {
+      type: "text/plain;charset=utf-8",
+    });
+    saveAs(blob, "download.csv");
+  };
+
   return (
-    <div>
-      <p className="f5 pb2 b">Downloads</p>
+    <div className="flex mb3">
+      <p className="f5 pb2 b mh2">Downloads: </p>
       <PdfRenderer />
+      <div
+        className="ml2 ph2 pv1 br2 bg-tan ba1 link pointer ttu mh1 b"
+        onClick={downloadJson}
+      >
+        json
+      </div>
+      <div
+        className="ml2 ph2 pv1 br2 bg-tan ba1 link pointer ttu mh1 b"
+        onClick={downloadCsv}
+      >
+        csv
+      </div>
     </div>
   );
 };
 
 const SidebarTabs = ({ searchState, map }) => {
-  const { chartData, dashboard } = searchState;
+  const { chartData, dashboard, geojson } = searchState;
 
   const description = TransformDescription(
     dashboard.sidebar.ui.charts[0].description
@@ -84,7 +117,7 @@ const SidebarTabs = ({ searchState, map }) => {
     <Tabs className="mb2 navlist center">
       <Tab label="Data">
         <div className="w-90 center pv3">
-          <Downloads />
+          <Downloads geojson={geojson} />
           <Chart chartData={chartData} description={description} />
         </div>
       </Tab>
