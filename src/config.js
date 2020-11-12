@@ -1,4 +1,4 @@
-export const API_URL = "http://sparc.wfp.org/api/";
+export const API_URL = "https://sparc.wfp.org/api/";
 
 export const LAYERS = {
   WMS: "WMS",
