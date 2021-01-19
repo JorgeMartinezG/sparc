@@ -47,7 +47,12 @@ const PdfPrint = ({ map, legend, chart, text }) => {
         <View>
           <Image
             src={mapImg}
-            style={{ width: "100%", height: "100%", position: "relative" }}
+            style={{
+              padding: "3%",
+              width: "100%",
+              height: "100%",
+              position: "relative",
+            }}
           />
           <Image
             src={legend}
@@ -55,8 +60,8 @@ const PdfPrint = ({ map, legend, chart, text }) => {
               width: "33%",
               height: "17%",
               position: "absolute",
-              right: "2%",
-              bottom: "2%",
+              right: "4%",
+              bottom: "5%",
             }}
           />
         </View>
