@@ -77,7 +77,7 @@ const PdfPrint = ({ map, legend, chart, text }) => {
           paddingHorizontal: 20,
         }}
       >
-        <Image src={chart} style={{ width: "50%", height: "50%" }} />
+        <Image src={chart} style={{ width: "65%", height: "55%" }} />
         <Text style={{ fontSize: 12, textAlign: "justify" }}>{text}</Text>
       </Page>
     </Document>
