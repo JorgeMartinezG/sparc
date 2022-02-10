@@ -15,7 +15,7 @@
     "file-saver": "^2.0.2",
     "html2canvas": "^1.0.0-rc.7",
     "mapbox-gl": "^1.9.1",
-    "node-sass": "^4.14.0",
+    "node-sass": "^7.0.0",
     "prettier": "^2.0.5",
     "react": "^16.13.1",
     "react-chartjs-2": "^2.9.0",
